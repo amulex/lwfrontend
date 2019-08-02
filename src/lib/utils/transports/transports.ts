@@ -2,8 +2,8 @@ import {Fetch, MaybePromiseVoid} from "@devlegal/shared-ts";
 import {DataChannelTransport, FileMessage, FileTransport} from "./file";
 import {ConnectionId, HandleSession} from "../../openvidu/openvidu";
 import {SignalTextTransport, TextMessage, TextTransport} from "./text";
-import {Stream} from "../../shared";
 import {Session} from "openvidu-browser";
+import {Stream} from "../Types";
 
 export type SendMessage = {
     time: Date
@@ -38,20 +38,24 @@ export type HandleRecvMessage<M> = HandleMessage<RecvMessage<M>>;
 export type TextTransportAgent = (t: TextTransport) => void;
 export type FileTransportAgent = (f: FileTransport) => void;
 
-export const bindTransportAgentsFactory = (fetch: Fetch, textAgent: TextTransportAgent, fileAgent: FileTransportAgent): HandleSession =>
-    (session) => {
-        const text = new CompositeTransport<TextMessage>([
-            new SignalTextTransport(session, fetch),
-            new OwnMessagesRepeater(session)
-        ]);
-        const file = new CompositeTransport<FileMessage>([
-            new DataChannelTransport(session, fetch),
-            new OwnMessagesRepeater(session)
-        ]);
+export class BindTransportAgentsFactory {
 
-        textAgent(text);
-        fileAgent(file);
-    };
+    public static create(fetch: Fetch, textAgent: TextTransportAgent, fileAgent: FileTransportAgent): HandleSession {
+        return (session) => {
+            const text = new CompositeTransport<TextMessage>([
+                new SignalTextTransport(session, fetch),
+                new OwnMessagesRepeater(session)
+            ]);
+            const file = new CompositeTransport<FileMessage>([
+                new DataChannelTransport(session, fetch),
+                new OwnMessagesRepeater(session)
+            ]);
+
+            textAgent(text);
+            fileAgent(file);
+        };
+    }
+}
 
 /**
  * Adds own sent messages receiving.

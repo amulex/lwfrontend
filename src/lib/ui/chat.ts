@@ -24,7 +24,17 @@ type TemplateElements = DeepReadonly<{
 
 type FileTemplateElements = TemplateElements & { formatText: (f: File) => string };
 
+export type ChatView = ChatElements | TextTransportAgent;
+export type FileView = FileElements | FileTransportAgent;
+
 const enterKeyCode = 13;
+
+
+export const isTextElements = (elements: ChatView): elements is ChatElements =>
+    (elements as ChatElements).input !== undefined;
+
+export const isFileElements = (elements: FileView): elements is FileElements =>
+    (elements as FileElements).input !== undefined;
 
 export const initTextChatFactory = ({input, button, messages}: ChatElements): TextTransportAgent =>
     (transport) => {

@@ -9,9 +9,10 @@ import {
     MaybePromiseVoid,
     OpenViduRole
 } from "@devlegal/shared-ts";
-import {isConsultantRole, ParticipantMetadata} from "../shared";
-import {filterParticipantsByRole, Profile, Tenant} from "../utils/backend";
+import {Backend, Profile, Tenant} from "./Backend";
 import underscore from "underscore";
+import {ParticipantMetadata} from "./Metadata";
+import {CommonHelper} from "./CommonHelper";
 
 /**
  * Repeats structure of {@see Session}.
@@ -72,7 +73,7 @@ export abstract class CallSignals {
         // but this place can be problem in further.
 
         const allButMeConnections = connections.filter(c => c.connectionId !== notifySession.connection.connectionId);
-        const consultants = await filterParticipantsByRole(allButMeConnections, isConsultantRole, this.fetch);
+        const consultants = await Backend.filterParticipantsByRole(allButMeConnections, CommonHelper.isConsultantRole, this.fetch);
         // const consultants = await filterParticipantsByRole(connections, isConsultantRole, this.fetch);
 
         if (consultants.length) {

@@ -5,8 +5,8 @@ import {WebRtcPeer} from "openvidu-browser/lib/OpenViduInternal/WebRtcPeer/WebRt
 import {assert, combineProcedures, Fetch, HandleMessage, jsonParseDefault, log, MimeType, noop, size as objectSize, FileHelper, WebRtcHelper} from "@devlegal/shared-ts";
 import {HandleRecvMessage, ReceiveMessageSystem, SendMessage, Transport} from "./transports";
 import {ConnectionId} from "../../openvidu/openvidu";
-import {logMessage, MessageType} from "../../utils/backend";
-import {Stream} from "../../shared";
+import {Backend, MessageType} from "../Backend";
+import {Stream} from "../Types";
 
 export type FileMessage = SendMessage & { file: File };
 export type FileTransport = Transport<FileMessage>;
@@ -72,7 +72,7 @@ export class DataChannelTransport implements FileTransport {
             buffers.push(data);
             const {name, type, size, time, system} = metadata!;
             const currentSize = FileHelper.totalSize(buffers);
-            handleSizeOverflow(metadata!, currentSize);
+            DataChannelTransport.handleSizeOverflow(metadata!, currentSize);
 
             if (currentSize === size) {
                 const file = new File(buffers, name, {type});
@@ -111,7 +111,7 @@ export class DataChannelTransport implements FileTransport {
     };
 
     private sendFile = async ({file, time}: FileMessage): Promise<void> => {
-        const metadata = createFileMetadata(file, time, {
+        const metadata = DataChannelTransport.createFileMetadata(file, time, {
             from: this.session.connection.connectionId,
             stream: Stream.Subscriber
         });
@@ -127,7 +127,7 @@ export class DataChannelTransport implements FileTransport {
             log('File sent:', file.name);
 
             const {name, type, size} = metadata;
-            await logMessage({
+            await Backend.logMessage({
                 type: MessageType.File,
                 typeRelated: {name, type, size},
                 time,
@@ -201,15 +201,15 @@ export class DataChannelTransport implements FileTransport {
         delete this.peers[id];
         log('WebRTC peer deleted:', id);
     };
+
+    private static createFileMetadata(file: File, time: Date, system: ReceiveMessageSystem): FileMetadata {
+        const {name, type, size} = file;
+        return {name, type, size, time, system};
+    };
+
+    private static handleSizeOverflow(metadata: FileMetadata, chunksSize: number): void {
+        if (chunksSize > metadata.size) {
+            log(`File ${metadata.name} size overflow: chunks size ${chunksSize} more then file size ${metadata.size}.`);
+        }
+    };
 }
-
-const createFileMetadata = (file: File, time: Date, system: ReceiveMessageSystem): FileMetadata => {
-    const {name, type, size} = file;
-    return {name, type, size, time, system};
-};
-
-const handleSizeOverflow = (metadata: FileMetadata, chunksSize: number): void => {
-    if (chunksSize > metadata.size) {
-        log(`File ${metadata.name} size overflow: chunks size ${chunksSize} more then file size ${metadata.size}.`);
-    }
-};

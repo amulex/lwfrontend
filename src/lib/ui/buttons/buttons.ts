@@ -1,8 +1,8 @@
 import {Publisher, StreamManager, Subscriber, VideoElementEvent} from "openvidu-browser";
-import {Media, Stream} from "../../shared";
 import {DeepReadonly} from "@devlegal/shared-ts";
 import {HandleVideoElementEvent} from "../../openvidu/openvidu";
 import {CompositePlayer, PlayerAction, SimplePlayer} from "./player";
+import {Media, Stream} from "../../utils/Types";
 
 export type ButtonsPermissions = DeepReadonly<{
     custom: {

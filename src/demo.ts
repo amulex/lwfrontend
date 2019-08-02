@@ -1,18 +1,14 @@
-import {
-    defaultInit,
-    Media,
-    ParticipantMetadata,
-    ParticipantType,
-    Stream
-} from "./lib/tenantApi/shared";
 import {Connection, OpenViduError, StreamManager, VideoElementEvent} from "openvidu-browser";
-import {PlayerAction} from "./lib/tenantApi/view/buttons/player";
 import {assert, log, DomHelper} from "@devlegal/shared-ts";
-import {getStream} from "./lib/tenantApi/view/buttons/buttons";
 import {env} from "./env";
-import {ClientApi} from "./lib/tenantApi/api/ClientApi";
-import {ConsultantApi} from "./lib/tenantApi/api/ConsultantApi";
-import {SessionParticipant} from "./lib/tenantApi/CallSignals";
+import {getStream} from "./lib/ui/buttons/buttons";
+import {PlayerAction} from "./lib/ui/buttons/player";
+import {Media, ParticipantType, Stream} from "./lib/utils/Types";
+import {ParticipantMetadata} from "./lib/utils/Metadata";
+import {ClientApi} from "./lib/api/ClientApi";
+import {ConsultantApi} from "./lib/api/ConsultantApi";
+import {LiveWidget} from "./lib/LiveWidget";
+import {SessionParticipant} from "./lib/utils/CallSignals";
 
 const elements = {
     streamsTargets: {
@@ -76,6 +72,7 @@ const metadata = {
 };
 
 //let session: ParticipantSession;
+let lw: LiveWidget = new LiveWidget(env);
 let clientApi: ClientApi;
 let consultantApi: ConsultantApi;
 const clientButton = <HTMLButtonElement>DomHelper.query('#client');
@@ -89,7 +86,7 @@ consultantButton.onclick = async () => {
     consultantButton.disabled = true;
     clientButton.disabled = true;
 
-    consultantApi = await defaultInit(ParticipantType.Consultant, env.credentials.consultant, elements, env, metadata);
+    consultantApi = await lw.defaultInit(ParticipantType.Consultant, env.credentials.consultant, elements, metadata);
     await consultantApi.onIncomingCall(async (metadata: SessionParticipant, answer: any) => {
         answerButton.disabled = false;
         answerButton.onclick = async () => {
@@ -121,7 +118,7 @@ clientButton.onclick = async () => {
     clientButton.disabled = true;
     consultantButton.disabled = true;
 
-    clientApi = await defaultInit(ParticipantType.Client, env.credentials.client, elements, env, metadata);
+    clientApi = await lw.defaultInit(ParticipantType.Client, env.credentials.client, elements, metadata);
     callButton.disabled = false;
     callAudioButton.disabled = false;
 

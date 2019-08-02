@@ -2,8 +2,8 @@ import {Session} from "openvidu-browser";
 import {Fetch} from "@devlegal/shared-ts";
 import {onSignal, signal} from "../../openvidu/signal";
 import {HandleRecvMessage, RecvMessage, SendMessage, Transport} from "./transports";
-import {logMessage, MessageType} from "../../utils/backend";
-import {Stream} from "../../shared";
+import {Backend, MessageType} from "../Backend";
+import {Stream} from "../Types";
 
 export type TextMessage = SendMessage & { text: string };
 export type TextTransport = Transport<TextMessage>;
@@ -26,7 +26,7 @@ export class SignalTextTransport implements TextTransport {
 
         await signal(this.session)()('text', message);
 
-        return logMessage({
+        return Backend.logMessage({
             type: MessageType.Text,
             typeRelated: {text},
             time,

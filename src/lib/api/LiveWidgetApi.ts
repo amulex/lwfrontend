@@ -1,9 +1,10 @@
 import {CallSignals} from "../utils/CallSignals";
 import {ConnectOptions} from "@devlegal/shared-ts";
 import {PublishersConnectSession} from "../openvidu/openvidu";
-import {getMetadata, HandleMetadata, ParticipantType} from "../shared";
 import {Connection, Publisher, PublisherProperties, Session, StreamEvent} from "openvidu-browser";
-import {Profile, Tenant} from "../utils/backend";
+import {Profile, Tenant} from "../utils/Backend";
+import {ParticipantType} from "../utils/Types";
+import {HandleMetadata, MetadataHelper} from "../utils/Metadata";
 
 export class LiveWidgetApi {
 
@@ -56,7 +57,7 @@ export class LiveWidgetApi {
 
         const handleParticipantLeft = (connection: Connection) => {
             this.participantLeftHandlers.forEach(handler => {
-                const metadata = getMetadata(connection);
+                const metadata = MetadataHelper.get(connection);
                 if (handler.type === 'all' || metadata.system.type === handler.type) {
                     // prevent sending to oneself
                     if (metadata.system.profile.email !== this.profile.email) {

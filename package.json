@@ -2,7 +2,6 @@
   "name": "@devlegal/lwfrontend",
   "description": "Frontend widget library for Live Widget project",
   "version": "0.0.1",
-  "private": true,
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "dependencies": {
@@ -13,14 +12,17 @@
   "devDependencies": {
     "@types/underscore": "^1.9.1",
     "@types/webrtc": "0.0.25",
-    "browserify": "^16.2.3",
+    "html-webpack-plugin": "^3.2.0",
     "http-server": "^0.11.1",
     "prettier": "^1.18.2",
-    "tsify": "^4.0.1",
+    "ts-loader": "^6.0.4",
     "tslint": "^5.18.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.4.5",
-    "uglify-js": "^3.5.4"
+    "uglify-js": "^3.5.4",
+    "webpack": "^4.39.1",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.7.2"
   },
   "scripts": {
     "build": "tsc -p .",
@@ -31,10 +33,7 @@
     "preversion": "npm run lint",
     "version": "npm run format && git add -A src",
     "postversion": "git push && git push --tags",
-    "vchat-prod": "node browserify.js src/videochat/index.ts es5 | npx uglifyjs -c > dist/videochat_bundle.min.js",
-    "vchat-dev": "node browserify.js src/videochat/index.ts esnext > dist/videochat_bundle.js",
-    "prod": "node browserify.js src/index.ts es5 | npx uglifyjs -c > dist/bundle.js",
-    "dev": "node browserify.js src/demo.ts esnext > dist/bundle.js"
+    "demo": "webpack-dev-server --mode development"
   },
   "repository": {
     "type": "git",

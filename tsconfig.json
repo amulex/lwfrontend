@@ -17,7 +17,6 @@
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
-    // Recommended: https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-7.html#support-for-import-d-from-cjs-form-commonjs-modules-with---esmoduleinterop
     "esModuleInterop": true
   },
   "include": [
@@ -25,7 +24,6 @@
   ],
   "exclude": [
     "node_modules",
-    "src/demo.ts",
-    "src/videochat/**/*.ts"
+    "src/demo.ts"
   ]
 }

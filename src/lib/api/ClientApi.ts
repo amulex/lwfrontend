@@ -3,7 +3,7 @@ import {PublisherProperties} from "openvidu-browser";
 import {LiveWidgetApi} from "./LiveWidgetApi";
 import {PublishersConnectSession, SessionId} from "../openvidu/openvidu";
 import {ClientSignals} from "../utils/CallSignals";
-import {Profile} from "../utils/backend";
+import {Profile} from "../utils/Backend";
 
 /**
  * API for client of tenant that needs in consulting.

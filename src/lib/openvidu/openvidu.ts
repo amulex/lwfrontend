@@ -4,7 +4,7 @@ import {
 } from "openvidu-browser";
 import {ConnectOptions, Fetch, log, MaybePromiseVoid, noop, FetchHelper} from "@devlegal/shared-ts";
 import {config} from "../../config";
-import {logConnectionFactory} from "../utils/backend";
+import {Backend} from "../utils/Backend";
 
 export type HandleSession = (session: Session) => MaybePromiseVoid;
 export type HandleVideoElementEvent = (event: VideoElementEvent) => MaybePromiseVoid;
@@ -69,7 +69,7 @@ export const openviduGlobal = new OpenVidu();
  * Fetch used for access to middleware, hence it should have proper authentication headers/other stuff.
  */
 export const connectToSessionFactory = (fetch: Fetch): ConnectSessionFactory => {
-    const logConnection = logConnectionFactory(fetch);
+    //const logConnection = logConnectionFactory(fetch);
 
     return (beforeConnect = noop) => async (options) => {
         const response = await FetchHelper.postJson(config.get().paths.middleware.createToken, options, fetch);
@@ -80,7 +80,8 @@ export const connectToSessionFactory = (fetch: Fetch): ConnectSessionFactory => 
         await beforeConnect(session);
         await session.connect(token);
 
-        logConnection(session);
+        //logConnection(session);
+        Backend.logConnection(session, fetch);
         log('Session connected', session, 'with token', token, 'connection id', session.connection.connectionId);
         return session;
     };

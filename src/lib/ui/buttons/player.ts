@@ -18,21 +18,21 @@ export class SimplePlayer implements Player {
         return this._paused;
     }
 
-    public play = () => {
+    public play() {
         if (this.paused) {
             this.playCb();
             this._paused = false;
         }
     };
 
-    public pause = () => {
+    public pause() {
         if (!this.paused) {
             this.pauseCb();
             this._paused = true;
         }
     };
 
-    public toggle = () => {
+    public toggle() {
         this._paused ? this.play() : this.pause();
     };
 }
@@ -48,13 +48,13 @@ export class CompositePlayer implements Player {
         return this.players.length ? this.players[0].paused : false;
     }
 
-    public play = () => {
+    public play() {
         for (const player of this.players) {
             player.play();
         }
     };
 
-    public pause = () => {
+    public pause() {
         for (const player of this.players) {
             player.pause();
         }
@@ -63,7 +63,7 @@ export class CompositePlayer implements Player {
     /**
      * When toggles, orients to the first player "paused" state and plays or pauses all players uniformly.
      */
-    public toggle = () => {
+    public toggle() {
         const toggleMethod = this.paused ? 'play' : 'pause';
 
         for (const player of this.players) {

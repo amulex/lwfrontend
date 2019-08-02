@@ -2,7 +2,7 @@ import {ConnectOptions, FailedFetch, MaybePromiseVoid, shallowMerge} from "@devl
 import {LiveWidgetApi} from "./LiveWidgetApi";
 import {PublishersConnectSession, SessionId} from "../openvidu/openvidu";
 import {ConsultantSignals, SessionParticipant} from "../utils/CallSignals";
-import {Profile} from "../utils/backend";
+import {Profile} from "../utils/Backend";
 
 /**
  * Callback, calling of which will produce answer to the call.
