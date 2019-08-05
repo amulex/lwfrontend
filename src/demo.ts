@@ -3,12 +3,11 @@ import {assert, log, DomHelper} from "@devlegal/shared-ts";
 import {env} from "./env";
 import {getStream} from "./lib/ui/buttons/buttons";
 import {PlayerAction} from "./lib/ui/buttons/player";
-import {Media, ParticipantType, Stream} from "./lib/utils/Types";
+import {Media, ParticipantType, SessionParticipant, Stream} from "./lib/utils/Types";
 import {ParticipantMetadata} from "./lib/utils/Metadata";
 import {ClientApi} from "./lib/api/ClientApi";
 import {ConsultantApi} from "./lib/api/ConsultantApi";
 import {LiveWidget} from "./lib/LiveWidget";
-import {SessionParticipant} from "./lib/utils/CallSignals";
 
 const elements = {
     streamsTargets: {

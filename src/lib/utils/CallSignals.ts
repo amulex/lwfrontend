@@ -13,24 +13,7 @@ import {Backend, Profile, Tenant} from "./Backend";
 import underscore from "underscore";
 import {ParticipantMetadata} from "./Metadata";
 import {CommonHelper} from "./CommonHelper";
-
-/**
- * Repeats structure of {@see Session}.
- */
-type SessionInfo = DeepReadonly<{
-    sessionId: string,
-    connection: {
-        stream: {
-            hasAudio: boolean,
-            hasVideo: boolean,
-        }
-    }
-}>;
-
-export type SessionParticipant = DeepReadonly<{
-    session: SessionInfo,
-    participant: ParticipantMetadata
-}>;
+import {SessionInfo, SessionParticipant} from "./Types";
 
 type HandleSessionParticipant = (p: SessionParticipant) => MaybePromiseVoid;
 
@@ -55,40 +38,67 @@ export abstract class CallSignals {
                 private fetch: Fetch) {
     }
 
-    protected signalParticipant = (type: string) => async (info: SessionInfo): Promise<void> => {
-        const metadata: SessionParticipant = {
-            session: extractSessionInfo(info),
-            participant: this.metadata
-        };
-        const data = JSON.stringify(metadata);
-
-        const notifySession = await this.getSession();
-        const connections = getAllConnections(notifySession);
-
-        // There is one issue here: in window.unload we have to leave all sessions.
-        // When we try to send signal LEAVE to bus, this code tries to get all participant's roles to send signal only to consultants.
-        // If some of them are not cached code will try to get it from backend.
-        // BUT! In unload handler all ajax request seems to be cancelled.
-        // So, for now seems like all participant's roles (but me) are cached BEFORE we can send leave signal, and now all is ok,
-        // but this place can be problem in further.
-
-        const allButMeConnections = connections.filter(c => c.connectionId !== notifySession.connection.connectionId);
-        const consultants = await Backend.filterParticipantsByRole(allButMeConnections, CommonHelper.isConsultantRole, this.fetch);
-        // const consultants = await filterParticipantsByRole(connections, isConsultantRole, this.fetch);
-
-        if (consultants.length) {
-            return notifySession.signal({type, data, to: consultants});
-        }
-    };
-
-    protected onParticipant = (type: string) => async (handle: HandleSessionParticipant): Promise<void> => {
+    public async disconnect(): Promise<void> {
         const session = await this.getSession();
-        session.on(`signal:${type}`, (event) => {
-            const data = ((event as SignalEvent).data);
-            const participant = jsonParseDefault(data);
-            handle(participant);
-        });
-    };
+        return session.disconnect();
+    }
+
+    public leave = this.signalParticipant(CallSignalTypes.Leave);
+    public maxParticipants = this.signalParticipant(CallSignalTypes.MaxParticipants);
+
+    protected signalParticipant(type: string) {
+        return async (info: SessionInfo): Promise<void> => {
+            const metadata: SessionParticipant = {
+                session: CallSignals.extractSessionInfo(info),
+                participant: this.metadata
+            };
+            const data = JSON.stringify(metadata);
+
+            const notifySession = await this.getSession();
+            const connections = getAllConnections(notifySession);
+
+            // There is one issue here: in window.unload we have to leave all sessions.
+            // When we try to send signal LEAVE to bus, this code tries to get all participant's roles to send signal only to consultants.
+            // If some of them are not cached code will try to get it from backend.
+            // BUT! In unload handler all ajax request seems to be cancelled.
+            // So, for now seems like all participant's roles (but me) are cached BEFORE we can send leave signal, and now all is ok,
+            // but this place can be problem in further.
+
+            const allButMeConnections = connections.filter(c => c.connectionId !== notifySession.connection.connectionId);
+            const consultants = await Backend.filterParticipantsByRole(allButMeConnections, CommonHelper.isConsultantRole, this.fetch);
+            // const consultants = await filterParticipantsByRole(connections, isConsultantRole, this.fetch);
+
+            if (consultants.length) {
+                return notifySession.signal({type, data, to: consultants});
+            }
+        };
+    }
+
+    protected onParticipant(type: string) {
+        return async (handle: HandleSessionParticipant): Promise<void> => {
+            const session = await this.getSession();
+            session.on(`signal:${type}`, (event) => {
+                const data = ((event as SignalEvent).data);
+                const participant = jsonParseDefault(data);
+                handle(participant);
+            });
+        };
+    }
+
+    /**
+     * From whole session object, for example.
+     */
+    protected static extractSessionInfo(session: SessionInfo): SessionInfo {
+        return {
+            sessionId: session.sessionId,
+            connection: {
+                stream: {
+                    hasAudio: session.connection.stream.hasAudio,
+                    hasVideo: session.connection.stream.hasVideo,
+                }
+            }
+        };
+    }
 
     private getSession = lazyAsync(async (): Promise<Session> => {
         const options = {
@@ -98,14 +108,6 @@ export abstract class CallSignals {
 
         return await this.connect(options);
     });
-
-    public async disconnect(): Promise<void> {
-        const session = await this.getSession();
-        return session.disconnect();
-    }
-
-    public leave = this.signalParticipant(CallSignalTypes.Leave);
-    public maxParticipants = this.signalParticipant(CallSignalTypes.MaxParticipants);
 }
 
 export class ClientSignals extends CallSignals {
@@ -120,16 +122,3 @@ export class ConsultantSignals extends CallSignals {
     public onLeft = this.onParticipant(CallSignalTypes.Leave);
     public onFirstMaxParticipants = decorateFirstArg(this.onParticipant(CallSignalTypes.MaxParticipants), underscore.once);
 }
-
-/**
- * From whole session object, for example.
- */
-const extractSessionInfo = (session: SessionInfo): SessionInfo => ({
-    sessionId: session.sessionId,
-    connection: {
-        stream: {
-            hasAudio: session.connection.stream.hasAudio,
-            hasVideo: session.connection.stream.hasVideo,
-        }
-    }
-});

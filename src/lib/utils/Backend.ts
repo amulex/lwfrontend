@@ -12,7 +12,7 @@ import {
 } from "@devlegal/shared-ts";
 import {config} from "../../config";
 import {Connection, Session} from "openvidu-browser";
-import {Settings} from "./Settings";
+import {Settings} from "./Types";
 
 export type Login = Readonly<{
     email: Email,

@@ -1,8 +1,9 @@
 import {ConnectOptions, FailedFetch, MaybePromiseVoid, shallowMerge} from "@devlegal/shared-ts";
 import {LiveWidgetApi} from "./LiveWidgetApi";
 import {PublishersConnectSession, SessionId} from "../openvidu/openvidu";
-import {ConsultantSignals, SessionParticipant} from "../utils/CallSignals";
+import {ConsultantSignals} from "../utils/CallSignals";
 import {Profile} from "../utils/Backend";
+import {SessionParticipant} from "../utils/Types";
 
 /**
  * Callback, calling of which will produce answer to the call.

@@ -25,8 +25,7 @@ import {Session, StreamEvent, StreamManager, Subscriber, VideoElementEvent} from
 import {addButtonsFactory} from "./ui/buttons/buttons";
 import {initFileChatFactory, initTextChatFactory, isFileElements, isTextElements} from "./ui/chat";
 import {CallSignals, ClientSignals, ConsultantSignals} from "./utils/CallSignals";
-import {Settings, ViewSettings} from "./utils/Settings";
-import {ParticipantMap, ParticipantType, StreamsTargets} from "./utils/Types";
+import {ParticipantMap, ParticipantType, Settings, StreamsTargets, ViewSettings} from "./utils/Types";
 import {MetadataHelper, MetadataOptions} from "./utils/Metadata";
 import {Auth} from "./utils/Auth";
 import {Backend, Credentials, Profile, Tenant} from "./utils/Backend";
