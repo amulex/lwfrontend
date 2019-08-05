@@ -1,10 +1,10 @@
-import {ConnectOptions, FailedFetch, Fetch, MaybePromiseVoid, shallowMerge} from '@devlegal/shared-ts';
+import { ConnectOptions, FailedFetch, Fetch, MaybePromiseVoid, shallowMerge } from '@devlegal/shared-ts';
 import { LiveWidgetApi } from './LiveWidgetApi';
 import { SessionId } from '../..';
 import { ConsultantSignals } from '../utils/CallSignals';
 import { Profile } from '../..';
 import { SessionParticipant, ViewSettings } from '../..';
-import { MetadataOptions } from "../..";
+import { MetadataOptions } from '../..';
 
 /**
  * Callback, calling of which will produce answer to the call.
@@ -35,7 +35,7 @@ export class ConsultantApi extends LiveWidgetApi {
     protected metadataOptions: MetadataOptions,
     protected signals: ConsultantSignals,
   ) {
-      super(authFetch, profile, elements, connectOptions, metadataOptions, signals);
+    super(authFetch, profile, elements, connectOptions, metadataOptions, signals);
   }
 
   /**

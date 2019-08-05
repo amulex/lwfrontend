@@ -1,9 +1,9 @@
-import {ConnectOptions, FailedFetch, Fetch} from '@devlegal/shared-ts';
+import { ConnectOptions, FailedFetch, Fetch } from '@devlegal/shared-ts';
 import { PublisherProperties } from 'openvidu-browser';
 import { LiveWidgetApi } from './LiveWidgetApi';
 import { SessionId, Profile } from '../..';
 import { ClientSignals } from '../utils/CallSignals';
-import { MetadataOptions, ViewSettings } from "../../";
+import { MetadataOptions, ViewSettings } from '../../';
 
 /**
  * API for client of tenant that needs in consulting.
@@ -24,7 +24,7 @@ export class ClientApi extends LiveWidgetApi {
     protected metadataOptions: MetadataOptions,
     protected signals: ClientSignals,
   ) {
-      super(authFetch, profile, elements, connectOptions, metadataOptions, signals);
+    super(authFetch, profile, elements, connectOptions, metadataOptions, signals);
   }
 
   /**

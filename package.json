@@ -1,7 +1,7 @@
 {
   "name": "@devlegal/lwfrontend",
   "description": "Frontend widget library for Live Widget project",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "dependencies": {

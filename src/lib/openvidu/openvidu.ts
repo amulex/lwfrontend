@@ -7,7 +7,7 @@ import {
   Session,
   VideoElementEvent,
 } from 'openvidu-browser';
-import {ConnectOptions, Fetch, log, MaybePromiseVoid, noop, FetchHelper, Jsonable} from '@devlegal/shared-ts';
+import { ConnectOptions, Fetch, log, MaybePromiseVoid, noop, FetchHelper, Jsonable } from '@devlegal/shared-ts';
 import { config } from '../../config';
 import { Backend } from '../utils/Backend';
 
@@ -72,28 +72,26 @@ export type OVPublisherError = OpenViduError;
 export const openviduGlobal = new OpenVidu();
 
 export class ConnectToSessionFactory {
+  /**
+   * Creates ConnectSessionFactory function with given fetch.
+   *
+   * Fetch used for access to middleware, hence it should have proper authentication headers/other stuff.
+   */
+  public static create(fetch: Fetch): ConnectSessionFactory {
+    return (beforeConnect = noop) => {
+      return async (options: Jsonable) => {
+        const response = await FetchHelper.postJson(config.get().paths.middleware.createToken, options, fetch);
+        const { token } = await response.json();
 
-    /**
-     * Creates ConnectSessionFactory function with given fetch.
-     *
-     * Fetch used for access to middleware, hence it should have proper authentication headers/other stuff.
-     */
-    public static create(fetch: Fetch): ConnectSessionFactory {
-        return (beforeConnect = noop) => {
-            return async (options: Jsonable) => {
-                const response = await FetchHelper.postJson(config.get().paths.middleware.createToken, options, fetch);
-                const {token} = await response.json();
+        const openVidu = new OpenVidu();
+        const session = openVidu.initSession();
+        await beforeConnect(session);
+        await session.connect(token);
 
-                const openVidu = new OpenVidu();
-                const session = openVidu.initSession();
-                await beforeConnect(session);
-                await session.connect(token);
-
-                Backend.logConnection(session, fetch);
-                log('Session connected', session, 'with token', token, 'connection id', session.connection.connectionId);
-                return session;
-            };
-        }
-    }
+        Backend.logConnection(session, fetch);
+        log('Session connected', session, 'with token', token, 'connection id', session.connection.connectionId);
+        return session;
+      };
+    };
+  }
 }
-

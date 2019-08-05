@@ -1,13 +1,8 @@
-import {
-  assert,
-  ConnectOptions,
-  Fetch,
-  shallowMerge,
-} from '@devlegal/shared-ts';
+import { assert, ConnectOptions, Fetch, shallowMerge } from '@devlegal/shared-ts';
 import { config, Env } from '../config';
 import { ClientApi } from './api/ClientApi';
 import { ConsultantApi } from './api/ConsultantApi';
-import {openviduGlobal} from './openvidu/openvidu';
+import { openviduGlobal } from './openvidu/openvidu';
 import { ClientSignals, ConsultantSignals } from './utils/CallSignals';
 import { ParticipantMap, ParticipantType, ViewSettings } from './utils/Types';
 import { MetadataHelper, MetadataOptions } from './utils/Metadata';
@@ -16,7 +11,6 @@ import { Backend, Credentials, Profile } from './utils/Backend';
 import { CommonHelper } from './utils/CommonHelper';
 
 export class LiveWidget {
-
   constructor(private env: Env) {
     config.init(env);
   }
@@ -60,7 +54,14 @@ export class LiveWidget {
     const signals = new signalsCtor(authFetch, metadata);
     await signals.init();
 
-    return new participantCtor(authFetch, profile, elements, connectOptions, metadataOptions, signals as ConsultantSignals & ClientSignals);
+    return new participantCtor(
+      authFetch,
+      profile,
+      elements,
+      connectOptions,
+      metadataOptions,
+      signals as ConsultantSignals & ClientSignals,
+    );
   }
 
   public async createConsultantSignals(

@@ -7,7 +7,7 @@ import { ParticipantMetadata } from './lib/utils/Metadata';
 import { ClientApi } from './lib/api/ClientApi';
 import { ConsultantApi } from './lib/api/ConsultantApi';
 import { LiveWidget } from './lib/LiveWidget';
-import {CommonHelper} from "./lib/utils/CommonHelper";
+import { CommonHelper } from './lib/utils/CommonHelper';
 
 const elements = {
   streamsTargets: {

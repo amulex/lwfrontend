@@ -1,5 +1,5 @@
-import {ConnectSession, ConnectToSessionFactory} from '../openvidu/openvidu';
-import {Connection, Session, SignalEvent} from 'openvidu-browser';
+import { ConnectSession, ConnectToSessionFactory } from '../openvidu/openvidu';
+import { Connection, Session, SignalEvent } from 'openvidu-browser';
 import {
   decorateFirstArg,
   Fetch,
@@ -12,7 +12,7 @@ import { Backend, Tenant } from './Backend';
 import underscore from 'underscore';
 import { ParticipantMetadata } from './Metadata';
 import { CommonHelper } from './CommonHelper';
-import { SessionInfo, SessionParticipant} from './Types';
+import { SessionInfo, SessionParticipant } from './Types';
 
 type HandleSessionParticipant = (p: SessionParticipant) => MaybePromiseVoid;
 
@@ -33,16 +33,13 @@ export abstract class CallSignals {
   public tenant?: Tenant;
   protected connect: ConnectSession;
 
-  constructor(
-    protected authFetch: Fetch,
-    protected metadata: ParticipantMetadata
-  ) {
-      const connector = ConnectToSessionFactory.create(authFetch);
-      this.connect = connector();
+  constructor(protected authFetch: Fetch, protected metadata: ParticipantMetadata) {
+    const connector = ConnectToSessionFactory.create(authFetch);
+    this.connect = connector();
   }
 
   public async init() {
-      this.tenant = await Backend.fetchTenant(this.authFetch);
+    this.tenant = await Backend.fetchTenant(this.authFetch);
   }
 
   public async disconnect(): Promise<void> {
@@ -123,7 +120,7 @@ export abstract class CallSignals {
   );
 
   private static getAllConnections(session: Session): Connection[] {
-      return Object.values(session.remoteConnections).concat(session.connection);
+    return Object.values(session.remoteConnections).concat(session.connection);
   }
 }
 
