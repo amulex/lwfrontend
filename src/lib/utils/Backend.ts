@@ -76,7 +76,7 @@ type FileData = {
 export enum MessageType {Text = 'text', File = 'file'}
 
 type ParticipantRoles = { [connectionId: string]: RoleString };
-type FetchParticipantRoles = (connectionIds: ConnectionId[], fetch: Fetch) => Promise<ParticipantRoles>;
+type FetchParticipantRoles = (connectionIds: ConnectionId[]) => Promise<ParticipantRoles>;
 
 export class Backend {
 
@@ -106,7 +106,7 @@ export class Backend {
      */
     public static async filterParticipantsByRole(connections: Connection[], predicate: (role?: RoleString) => boolean, fetch: Fetch): Promise<Connection[]> {
 
-        const fetchParticipantRoles: FetchParticipantRoles = async (connectionIds, fetch) => {
+        const fetchParticipantRoles: FetchParticipantRoles = async (connectionIds) => {
             const url = new URL(config.get().paths.backend.participantRoles);
             FetchHelper.searchParamsAddArray('id[]', connectionIds, url.searchParams);
             const response = await fetch(url.toString());
@@ -115,11 +115,11 @@ export class Backend {
 
         const fetchParticipantRolesCached = ((): FetchParticipantRoles => {
             const cache: ParticipantRoles = {};
-            return async (connectionIds, fetch) => {
+            return async (connectionIds) => {
                 const notCachedIds = connectionIds.filter(connectionId => !cache[connectionId]);
 
                 if (notCachedIds.length) {
-                    const newRoles = await fetchParticipantRoles(notCachedIds, fetch);
+                    const newRoles = await fetchParticipantRoles(notCachedIds);
                     Object.assign(cache, newRoles);
                 }
 
@@ -128,7 +128,7 @@ export class Backend {
         })();
 
         const ids = connections.map(c => c.connectionId);
-        const roles = await fetchParticipantRolesCached(ids, fetch);
+        const roles = await fetchParticipantRolesCached(ids);
         return connections.filter(connection => predicate(roles[connection.connectionId]));
     };
 

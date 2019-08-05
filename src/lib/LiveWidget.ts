@@ -41,8 +41,7 @@ export class LiveWidget {
     /**
      * Default entry point function, for advanced cases use combination of API functions/classes.
      */
-    public async defaultInit<K extends ParticipantType>(type: K, credentials: Credentials, elements: ViewSettings, /*env: Env,*/ options: MetadataOptions = {}): Promise<ParticipantMap[K]> {
-        //config.init(env);
+    public async defaultInit<K extends ParticipantType>(type: K, credentials: Credentials, elements: ViewSettings, options: MetadataOptions = {}): Promise<ParticipantMap[K]> {
         const fetch = await Auth.createAuthFetch(credentials);
         const profile = await Backend.fetchProfile(fetch);
         return this.createParticipant(type, profile, elements, fetch, options);

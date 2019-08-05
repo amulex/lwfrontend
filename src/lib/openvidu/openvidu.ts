@@ -69,8 +69,6 @@ export const openviduGlobal = new OpenVidu();
  * Fetch used for access to middleware, hence it should have proper authentication headers/other stuff.
  */
 export const connectToSessionFactory = (fetch: Fetch): ConnectSessionFactory => {
-    //const logConnection = logConnectionFactory(fetch);
-
     return (beforeConnect = noop) => async (options) => {
         const response = await FetchHelper.postJson(config.get().paths.middleware.createToken, options, fetch);
         const {token} = await response.json();
@@ -80,7 +78,6 @@ export const connectToSessionFactory = (fetch: Fetch): ConnectSessionFactory => 
         await beforeConnect(session);
         await session.connect(token);
 
-        //logConnection(session);
         Backend.logConnection(session, fetch);
         log('Session connected', session, 'with token', token, 'connection id', session.connection.connectionId);
         return session;
