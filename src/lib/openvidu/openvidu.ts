@@ -1,10 +1,15 @@
 import {
-    Connection, OpenVidu, OpenViduError, Publisher, PublisherProperties, Session,
-    VideoElementEvent
-} from "openvidu-browser";
-import {ConnectOptions, Fetch, log, MaybePromiseVoid, noop, FetchHelper} from "@devlegal/shared-ts";
-import {config} from "../../config";
-import {Backend} from "../utils/Backend";
+  Connection,
+  OpenVidu,
+  OpenViduError,
+  Publisher,
+  PublisherProperties,
+  Session,
+  VideoElementEvent,
+} from 'openvidu-browser';
+import { ConnectOptions, Fetch, log, MaybePromiseVoid, noop, FetchHelper } from '@devlegal/shared-ts';
+import { config } from '../../config';
+import { Backend } from '../utils/Backend';
 
 export type HandleSession = (session: Session) => MaybePromiseVoid;
 export type HandleVideoElementEvent = (event: VideoElementEvent) => MaybePromiseVoid;
@@ -48,7 +53,10 @@ export type PublishersConnectSessionFactory = ConnectFactory<PublishersConnectSe
  * throws and return: same as {@see ConnectSession}
  * @throws OVPublisherError
  */
-export type PublishersConnectSession = (options: ConnectOptions, publisherProperties?: PublisherProperties) => Promise<Publisher>;
+export type PublishersConnectSession = (
+  options: ConnectOptions,
+  publisherProperties?: PublisherProperties,
+) => Promise<Publisher>;
 
 /**
  * If OpenVidu.initPublisherAsync produced error {@see OpenViduErrorName}.
@@ -69,20 +77,20 @@ export const openviduGlobal = new OpenVidu();
  * Fetch used for access to middleware, hence it should have proper authentication headers/other stuff.
  */
 export const connectToSessionFactory = (fetch: Fetch): ConnectSessionFactory => {
-    return (beforeConnect = noop) => async (options) => {
-        const response = await FetchHelper.postJson(config.get().paths.middleware.createToken, options, fetch);
-        const {token} = await response.json();
+  return (beforeConnect = noop) => async options => {
+    const response = await FetchHelper.postJson(config.get().paths.middleware.createToken, options, fetch);
+    const { token } = await response.json();
 
-        const openVidu = new OpenVidu();
-        const session = openVidu.initSession();
-        await beforeConnect(session);
-        await session.connect(token);
+    const openVidu = new OpenVidu();
+    const session = openVidu.initSession();
+    await beforeConnect(session);
+    await session.connect(token);
 
-        Backend.logConnection(session, fetch);
-        log('Session connected', session, 'with token', token, 'connection id', session.connection.connectionId);
-        return session;
-    };
+    Backend.logConnection(session, fetch);
+    log('Session connected', session, 'with token', token, 'connection id', session.connection.connectionId);
+    return session;
+  };
 };
 
 export const getAllConnections = (session: Session): Connection[] =>
-    Object.values(session.remoteConnections).concat(session.connection);
+  Object.values(session.remoteConnections).concat(session.connection);
