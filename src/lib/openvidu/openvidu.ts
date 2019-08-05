@@ -7,7 +7,7 @@ import {
   Session,
   VideoElementEvent,
 } from 'openvidu-browser';
-import { ConnectOptions, Fetch, log, MaybePromiseVoid, noop, FetchHelper } from '@devlegal/shared-ts';
+import {ConnectOptions, Fetch, log, MaybePromiseVoid, noop, FetchHelper, Jsonable} from '@devlegal/shared-ts';
 import { config } from '../../config';
 import { Backend } from '../utils/Backend';
 
@@ -71,26 +71,29 @@ export type OVPublisherError = OpenViduError;
  */
 export const openviduGlobal = new OpenVidu();
 
-/**
- * Creates ConnectSessionFactory function with given fetch.
- *
- * Fetch used for access to middleware, hence it should have proper authentication headers/other stuff.
- */
-export const connectToSessionFactory = (fetch: Fetch): ConnectSessionFactory => {
-  return (beforeConnect = noop) => async options => {
-    const response = await FetchHelper.postJson(config.get().paths.middleware.createToken, options, fetch);
-    const { token } = await response.json();
+export class ConnectToSessionFactory {
 
-    const openVidu = new OpenVidu();
-    const session = openVidu.initSession();
-    await beforeConnect(session);
-    await session.connect(token);
+    /**
+     * Creates ConnectSessionFactory function with given fetch.
+     *
+     * Fetch used for access to middleware, hence it should have proper authentication headers/other stuff.
+     */
+    public static create(fetch: Fetch): ConnectSessionFactory {
+        return (beforeConnect = noop) => {
+            return async (options: Jsonable) => {
+                const response = await FetchHelper.postJson(config.get().paths.middleware.createToken, options, fetch);
+                const {token} = await response.json();
 
-    Backend.logConnection(session, fetch);
-    log('Session connected', session, 'with token', token, 'connection id', session.connection.connectionId);
-    return session;
-  };
-};
+                const openVidu = new OpenVidu();
+                const session = openVidu.initSession();
+                await beforeConnect(session);
+                await session.connect(token);
 
-export const getAllConnections = (session: Session): Connection[] =>
-  Object.values(session.remoteConnections).concat(session.connection);
+                Backend.logConnection(session, fetch);
+                log('Session connected', session, 'with token', token, 'connection id', session.connection.connectionId);
+                return session;
+            };
+        }
+    }
+}
+

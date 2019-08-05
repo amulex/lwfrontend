@@ -1,5 +1,5 @@
-import { ConnectSession, getAllConnections } from '../openvidu/openvidu';
-import { Session, SignalEvent } from 'openvidu-browser';
+import { ConnectSession } from '../openvidu/openvidu';
+import {Connection, Session, SignalEvent} from 'openvidu-browser';
 import {
   decorateFirstArg,
   DeepReadonly,
@@ -56,7 +56,7 @@ export abstract class CallSignals {
       const data = JSON.stringify(metadata);
 
       const notifySession = await this.getSession();
-      const connections = getAllConnections(notifySession);
+      const connections = CallSignals.getAllConnections(notifySession);
 
       // There is one issue here: in window.unload we have to leave all sessions.
       // When we try to send signal LEAVE to bus, this code tries to get all participant's roles to send signal only to consultants.
@@ -115,6 +115,10 @@ export abstract class CallSignals {
       return await this.connect(options);
     },
   );
+
+  private static getAllConnections(session: Session): Connection[] {
+      return Object.values(session.remoteConnections).concat(session.connection);
+  }
 }
 
 export class ClientSignals extends CallSignals {

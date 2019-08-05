@@ -3,6 +3,7 @@ import { DeepReadonly } from '@devlegal/shared-ts';
 import { HandleVideoElementEvent } from '../../openvidu/openvidu';
 import { CompositePlayer, PlayerAction, SimplePlayer } from './player';
 import { Media, Stream } from '../../utils/Types';
+import {CommonHelper} from "../../utils/CommonHelper";
 
 export type ButtonsPermissions = DeepReadonly<{
   custom: {
@@ -66,61 +67,52 @@ const playerActions: PlayerActions = {
   },
 };
 
-/**
- * Creates a function that add buttons to newly created stream (publisher's or subscriber's).
- */
-export const addButtonsFactory = (
-  permissions: ButtonsPermissions,
-  srcButtons: ButtonConfig[],
-): HandleVideoElementEvent => {
-  const buttons = excludeDenied(srcButtons, permissions);
+export class AddButtonsFactory {
 
-  return event => {
-    const streamManager = event.target as StreamManager;
-    const stream = getStream(streamManager);
+    /**
+     * Creates a function that add buttons to newly created stream (publisher's or subscriber's).
+     */
+    public static create(permissions: ButtonsPermissions, srcButtons: ButtonConfig[]): HandleVideoElementEvent {
+        const buttons = AddButtonsFactory.excludeDenied(srcButtons, permissions);
 
-    showNativeControls(event.element, permissions, stream);
+        return event => {
+            const streamManager = event.target as StreamManager;
+            const stream = CommonHelper.getStream(streamManager);
 
-    const streamButtons = buttons.filter(button => button.streams.includes(stream));
-    for (const button of streamButtons) {
-      const players = button.media.map(media => {
-        const actions = playerActions[stream][media];
-        return new SimplePlayer(() => actions.play(streamManager), () => actions.pause(streamManager));
-      });
-      const player = new CompositePlayer(players);
-      button.elements(event).forEach(el => el.addEventListener('click', player[button.action]));
-    }
-  };
-};
+            AddButtonsFactory.showNativeControls(event.element, permissions, stream);
 
-const showNativeControls = (element: HTMLVideoElement, permissions: ButtonsPermissions, stream: Stream): void => {
-  if (permissions.native[stream]) {
-    element.controls = true;
-  }
-};
+            const streamButtons = buttons.filter(button => button.streams.includes(stream));
+            for (const button of streamButtons) {
+                const players = button.media.map(media => {
+                    const actions = playerActions[stream][media];
+                    return new SimplePlayer(() => actions.play(streamManager), () => actions.pause(streamManager));
+                });
+                const player = new CompositePlayer(players);
+                button.elements(event).forEach(el => el.addEventListener('click', player[button.action]));
+            }
+        };
+    };
 
-/**
- * Example: if button controls audio and video streams for publisher, but only audio allowed, button will be completly excluded anyway.
- */
-const excludeDenied = (buttons: ButtonConfig[], permissions: ButtonsPermissions): ButtonConfig[] =>
-  buttons.filter(button => {
-    for (const stream of button.streams) {
-      for (const media of button.media) {
-        if (!permissions.custom[stream][media]) {
-          return false;
+    private static showNativeControls(element: HTMLVideoElement, permissions: ButtonsPermissions, stream: Stream): void {
+        if (permissions.native[stream]) {
+            element.controls = true;
         }
-      }
+    };
+
+    /**
+     * Example: if button controls audio and video streams for publisher, but only audio allowed, button will be completly excluded anyway.
+     */
+    private static excludeDenied(buttons: ButtonConfig[], permissions: ButtonsPermissions): ButtonConfig[] {
+        return buttons.filter(button => {
+            for (const stream of button.streams) {
+                for (const media of button.media) {
+                    if (!permissions.custom[stream][media]) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        });
     }
-
-    return true;
-  });
-
-export const getStream = (manager: StreamManager): Stream => {
-  if (manager instanceof Publisher) {
-    return Stream.Publisher;
-  }
-  if (manager instanceof Subscriber) {
-    return Stream.Subscriber;
-  }
-  throw new Error('Invalid stream type');
-};
+}

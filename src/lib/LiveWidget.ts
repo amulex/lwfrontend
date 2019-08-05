@@ -13,23 +13,22 @@ import { config, Env } from '../config';
 import { ClientApi } from './api/ClientApi';
 import { ConsultantApi } from './api/ConsultantApi';
 import {
-  ConnectSessionFactory,
-  connectToSessionFactory,
-  HandleSession,
-  HandleVideoElementEvent,
-  openviduGlobal,
-  PublishersConnectSessionFactory,
+    ConnectSessionFactory, ConnectToSessionFactory,
+    HandleSession,
+    HandleVideoElementEvent,
+    openviduGlobal,
+    PublishersConnectSessionFactory,
 } from './openvidu/openvidu';
 import { BindTransportAgentsFactory, FileTransportAgent, TextTransportAgent } from './utils/transports/transports';
 import { Session, StreamEvent, StreamManager, Subscriber, VideoElementEvent } from 'openvidu-browser';
-import { addButtonsFactory } from './ui/buttons/buttons';
-import { initFileChatFactory, initTextChatFactory, isFileElements, isTextElements } from './ui/chat';
+import {AddButtonsFactory} from './ui/buttons/buttons';
 import { CallSignals, ClientSignals, ConsultantSignals } from './utils/CallSignals';
 import { ParticipantMap, ParticipantType, Settings, StreamsTargets, ViewSettings } from './utils/Types';
 import { MetadataHelper, MetadataOptions } from './utils/Metadata';
 import { Auth } from './utils/Auth';
 import { Backend, Credentials, Profile, Tenant } from './utils/Backend';
 import { CommonHelper } from './utils/CommonHelper';
+import { ChatHelper, FileChatFactory, TextChatFactory } from "./ui/chat";
 
 export class LiveWidget {
   constructor(private env: Env) {
@@ -64,7 +63,7 @@ export class LiveWidget {
     );
 
     const tenant: Tenant = await Backend.fetchTenant(fetch);
-    const agents = this.createTransportAgents(profile.settings.chat, elements.chat);
+    const agents = LiveWidget.createTransportAgents(profile.settings.chat, elements.chat);
     const bindTransportAgents = BindTransportAgentsFactory.create(fetch, ...agents);
 
     const metadata = MetadataHelper.create(options, type, profile);
@@ -74,7 +73,7 @@ export class LiveWidget {
       },
     });
     const handleMetadata = this.handleMetadataFactory(options, fetch);
-    const addButtons = addButtonsFactory(profile.settings.buttons, elements.buttons || []);
+    const addButtons = AddButtonsFactory.create(profile.settings.buttons, elements.buttons || []);
     const handleVideoCreated = combineProcedures(
       handleMetadata,
       addButtons,
@@ -85,7 +84,7 @@ export class LiveWidget {
     const signalsCtor = type === ParticipantType.Consultant ? ConsultantSignals : ClientSignals;
     const participantCtor = type === ParticipantType.Consultant ? ConsultantApi : ClientApi;
 
-    const connectToSession = connectToSessionFactory(fetch);
+    const connectToSession = ConnectToSessionFactory.create(fetch);
     const signals = new signalsCtor(connectToSession(), profile, tenant, metadata, fetch);
     const allToAllConnect = this.allToAllConnectSessionMetafactory(
       connectToSession,
@@ -103,7 +102,7 @@ export class LiveWidget {
     fetch: Fetch,
     options: MetadataOptions = {},
   ): Promise<ConsultantSignals> {
-    const connectToSession = connectToSessionFactory(fetch);
+    const connectToSession = ConnectToSessionFactory.create(fetch);
     const tenant: Tenant = await Backend.fetchTenant(fetch);
     const metadata = MetadataHelper.create(options, ParticipantType.Consultant, profile);
     return new ConsultantSignals(connectToSession(), profile, tenant, metadata, fetch);
@@ -169,7 +168,7 @@ export class LiveWidget {
     };
   }
 
-  public createTransportAgents(
+  private static createTransportAgents(
     settings: Settings['chat'],
     elements: ViewSettings['chat'],
   ): [TextTransportAgent, FileTransportAgent] {
@@ -177,9 +176,9 @@ export class LiveWidget {
     const fileView = getProp(elements, 'file');
 
     const textAgent =
-      textView && settings.text ? (isTextElements(textView) ? initTextChatFactory(textView) : textView) : noop;
+      textView && settings.text ? (ChatHelper.isTextElements(textView) ? TextChatFactory.init(textView) : textView) : noop;
     const fileAgent =
-      fileView && settings.file ? (isFileElements(fileView) ? initFileChatFactory(fileView) : fileView) : noop;
+      fileView && settings.file ? (ChatHelper.isFileElements(fileView) ? FileChatFactory.init(fileView) : fileView) : noop;
 
     return [textAgent, fileAgent];
   }
