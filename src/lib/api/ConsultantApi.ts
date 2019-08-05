@@ -1,9 +1,10 @@
-import { ConnectOptions, FailedFetch, MaybePromiseVoid, shallowMerge } from '@devlegal/shared-ts';
+import {ConnectOptions, FailedFetch, Fetch, MaybePromiseVoid, shallowMerge} from '@devlegal/shared-ts';
 import { LiveWidgetApi } from './LiveWidgetApi';
-import { PublishersConnectSession, SessionId } from '../openvidu/openvidu';
+import { SessionId } from '../..';
 import { ConsultantSignals } from '../utils/CallSignals';
-import { Profile } from '../utils/Backend';
-import { SessionParticipant } from '../utils/Types';
+import { Profile } from '../..';
+import { SessionParticipant, ViewSettings } from '../..';
+import { MetadataOptions } from "../..";
 
 /**
  * Callback, calling of which will produce answer to the call.
@@ -27,12 +28,14 @@ export class ConsultantApi extends LiveWidgetApi {
    * @hidden
    */
   constructor(
+    protected authFetch: Fetch,
     protected profile: Profile,
-    protected connector: PublishersConnectSession,
-    protected options: ConnectOptions,
+    protected elements: ViewSettings,
+    protected connectOptions: ConnectOptions,
+    protected metadataOptions: MetadataOptions,
     protected signals: ConsultantSignals,
   ) {
-    super(profile, connector, options, signals);
+      super(authFetch, profile, elements, connectOptions, metadataOptions, signals);
   }
 
   /**
@@ -80,7 +83,7 @@ export class ConsultantApi extends LiveWidgetApi {
    * @throws OVPublisherError
    */
   public async answer(sessionId: string): Promise<SessionId> {
-    const options = shallowMerge(this.options, { session: { customSessionId: sessionId } });
+    const options = shallowMerge(this.connectOptions, { session: { customSessionId: sessionId } });
 
     try {
       await this.connect(options);

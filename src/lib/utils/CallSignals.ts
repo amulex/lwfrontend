@@ -1,19 +1,18 @@
-import { ConnectSession } from '../openvidu/openvidu';
+import {ConnectSession, ConnectToSessionFactory} from '../openvidu/openvidu';
 import {Connection, Session, SignalEvent} from 'openvidu-browser';
 import {
   decorateFirstArg,
-  DeepReadonly,
   Fetch,
   jsonParseDefault,
   lazyAsync,
   MaybePromiseVoid,
   OpenViduRole,
 } from '@devlegal/shared-ts';
-import { Backend, Profile, Tenant } from './Backend';
+import { Backend, Tenant } from './Backend';
 import underscore from 'underscore';
 import { ParticipantMetadata } from './Metadata';
 import { CommonHelper } from './CommonHelper';
-import { SessionInfo, SessionParticipant } from './Types';
+import { SessionInfo, SessionParticipant} from './Types';
 
 type HandleSessionParticipant = (p: SessionParticipant) => MaybePromiseVoid;
 
@@ -31,13 +30,20 @@ enum CallSignalTypes {
  * All signal can be listened only by consultants to prevent vulnerabilities from anonymous user.
  */
 export abstract class CallSignals {
+  public tenant?: Tenant;
+  protected connect: ConnectSession;
+
   constructor(
-    private connect: ConnectSession,
-    private profile: Profile,
-    public tenant: Tenant,
-    protected metadata: ParticipantMetadata,
-    private fetch: Fetch,
-  ) {}
+    protected authFetch: Fetch,
+    protected metadata: ParticipantMetadata
+  ) {
+      const connector = ConnectToSessionFactory.create(authFetch);
+      this.connect = connector();
+  }
+
+  public async init() {
+      this.tenant = await Backend.fetchTenant(this.authFetch);
+  }
 
   public async disconnect(): Promise<void> {
     const session = await this.getSession();
@@ -69,7 +75,7 @@ export abstract class CallSignals {
       const consultants = await Backend.filterParticipantsByRole(
         allButMeConnections,
         CommonHelper.isConsultantRole,
-        this.fetch,
+        this.authFetch,
       );
       // const consultants = await filterParticipantsByRole(connections, isConsultantRole, this.fetch);
 
@@ -108,7 +114,7 @@ export abstract class CallSignals {
   private getSession = lazyAsync(
     async (): Promise<Session> => {
       const options = {
-        session: { customSessionId: this.tenant.key },
+        session: { customSessionId: this.tenant!.key },
         token: { role: OpenViduRole.SUBSCRIBER },
       };
 

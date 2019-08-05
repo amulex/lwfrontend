@@ -1,13 +1,13 @@
 import { Connection, OpenViduError, StreamManager, VideoElementEvent } from 'openvidu-browser';
 import { assert, log, DomHelper } from '@devlegal/shared-ts';
 import { env } from './env';
-import { getStream } from './lib/ui/buttons/buttons';
 import { PlayerAction } from './lib/ui/buttons/player';
 import { Media, ParticipantType, SessionParticipant, Stream } from './lib/utils/Types';
 import { ParticipantMetadata } from './lib/utils/Metadata';
 import { ClientApi } from './lib/api/ClientApi';
 import { ConsultantApi } from './lib/api/ConsultantApi';
 import { LiveWidget } from './lib/LiveWidget';
+import {CommonHelper} from "./lib/utils/CommonHelper";
 
 const elements = {
   streamsTargets: {
@@ -19,7 +19,7 @@ const elements = {
       elements: (event: VideoElementEvent) => {
         const element = DomHelper.clone(DomHelper.query('.widget-templates button.video.toggle'));
         const manager = <StreamManager>event.target;
-        const stream = getStream(manager);
+        const stream = CommonHelper.getStream(manager);
         const container = DomHelper.query(`#${stream}`);
         container.appendChild(element);
         return [element];

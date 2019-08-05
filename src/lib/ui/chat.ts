@@ -90,7 +90,7 @@ export class FileChatFactory {
                 input.value = '';
             };
 
-            const handle = isFileMessagesElements(messages) ? FileChatFactory.defaultFileHandlerFactory(messages) : messages;
+            const handle = ChatHelper.isFileMessagesElements(messages) ? FileChatFactory.defaultFileHandlerFactory(messages) : messages;
             transport.onReceived(handle);
         };
     };

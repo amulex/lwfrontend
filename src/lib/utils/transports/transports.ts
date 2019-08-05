@@ -1,9 +1,10 @@
-import { Fetch, MaybePromiseVoid } from '@devlegal/shared-ts';
+import {Fetch, getProp, MaybePromiseVoid, noop} from '@devlegal/shared-ts';
 import { DataChannelTransport, FileMessage, FileTransport } from './file';
 import { ConnectionId, HandleSession } from '../../openvidu/openvidu';
 import { SignalTextTransport, TextMessage, TextTransport } from './text';
 import { Session } from 'openvidu-browser';
-import { Stream } from '../Types';
+import {Settings, Stream, ViewSettings} from '../Types';
+import {ChatHelper, FileChatFactory, TextChatFactory} from "../../ui/chat";
 
 export type SendMessage = {
   time: Date;
@@ -54,6 +55,23 @@ export class BindTransportAgentsFactory {
       fileAgent(file);
     };
   }
+}
+
+export class TransportAgentsFactory {
+  public static create (
+        settings: Settings['chat'],
+        elements: ViewSettings['chat'],
+    ): [TextTransportAgent, FileTransportAgent] {
+        const textView = getProp(elements, 'text');
+        const fileView = getProp(elements, 'file');
+
+        const textAgent =
+            textView && settings.text ? (ChatHelper.isTextElements(textView) ? TextChatFactory.init(textView) : textView) : noop;
+        const fileAgent =
+            fileView && settings.file ? (ChatHelper.isFileElements(fileView) ? FileChatFactory.init(fileView) : fileView) : noop;
+
+        return [textAgent, fileAgent];
+    }
 }
 
 /**

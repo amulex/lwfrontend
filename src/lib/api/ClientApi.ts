@@ -1,9 +1,9 @@
-import { ConnectOptions, FailedFetch } from '@devlegal/shared-ts';
+import {ConnectOptions, FailedFetch, Fetch} from '@devlegal/shared-ts';
 import { PublisherProperties } from 'openvidu-browser';
 import { LiveWidgetApi } from './LiveWidgetApi';
-import { PublishersConnectSession, SessionId } from '../openvidu/openvidu';
+import { SessionId, Profile } from '../..';
 import { ClientSignals } from '../utils/CallSignals';
-import { Profile } from '../utils/Backend';
+import { MetadataOptions, ViewSettings } from "../../";
 
 /**
  * API for client of tenant that needs in consulting.
@@ -17,12 +17,14 @@ export class ClientApi extends LiveWidgetApi {
    * @hidden
    */
   constructor(
+    protected authFetch: Fetch,
     protected profile: Profile,
-    protected connector: PublishersConnectSession,
-    protected options: ConnectOptions,
+    protected elements: ViewSettings,
+    protected connectOptions: ConnectOptions,
+    protected metadataOptions: MetadataOptions,
     protected signals: ClientSignals,
   ) {
-    super(profile, connector, options, signals);
+      super(authFetch, profile, elements, connectOptions, metadataOptions, signals);
   }
 
   /**
@@ -32,7 +34,7 @@ export class ClientApi extends LiveWidgetApi {
    */
   public async call(customProperties: PublisherProperties = {}): Promise<SessionId> {
     try {
-      await this.connect(this.options, customProperties);
+      await this.connect(this.connectOptions, customProperties);
       await this.signals.call(this.activeSession!);
       return this.activeSession!.sessionId;
     } catch (error) {
