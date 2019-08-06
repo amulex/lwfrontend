@@ -1,10 +1,10 @@
 import { ConnectOptions, FailedFetch, Fetch, MaybePromiseVoid, shallowMerge } from '@devlegal/shared-ts';
 import { LiveWidgetApi } from './LiveWidgetApi';
-import { SessionId } from '../..';
+import { SessionId } from '../openvidu/openvidu';
 import { ConsultantSignals } from '../utils/CallSignals';
-import { Profile } from '../..';
-import { SessionParticipant, ViewSettings } from '../..';
-import { MetadataOptions } from '../..';
+import { Profile } from '../utils/Backend';
+import { SessionParticipant, ViewSettings } from '../utils/Types';
+import { MetadataOptions } from '../utils/Metadata';
 
 /**
  * Callback, calling of which will produce answer to the call.

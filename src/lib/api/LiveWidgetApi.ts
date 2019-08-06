@@ -1,21 +1,19 @@
-import { CallSignals } from '../utils/CallSignals';
-import { combineProcedures, ConnectOptions, Fetch, getProp, log, noop, shallowMerge, size } from '@devlegal/shared-ts';
-import { ConnectToSessionFactory, HandleVideoElementEvent } from '../openvidu/openvidu';
+import {CallSignals} from '../utils/CallSignals';
+import {combineProcedures, ConnectOptions, Fetch, getProp, log, noop, shallowMerge, size} from '@devlegal/shared-ts';
+import {ConnectToSessionFactory, HandleVideoElementEvent} from '../openvidu/openvidu';
 import {
-  Connection,
-  Publisher,
-  PublisherProperties,
-  Session,
-  StreamEvent,
-  StreamManager,
-  Subscriber,
-  VideoElementEvent,
+    Connection,
+    Publisher,
+    PublisherProperties,
+    Session,
+    StreamEvent, StreamManager,
+    Subscriber, VideoElementEvent,
 } from 'openvidu-browser';
-import { Backend, Profile, Tenant } from '../..';
-import { ParticipantType, ViewSettings } from '../..';
+import { Backend, Profile, Tenant } from '../utils/Backend';
+import { ParticipantType, ViewSettings } from '../utils/Types';
 import { HandleMetadata, MetadataHelper, MetadataOptions } from '../utils/Metadata';
-import { BindTransportAgentsFactory, TransportAgentsFactory } from '../utils/transports/transports';
-import { AddButtonsFactory } from '../ui/buttons/buttons';
+import {BindTransportAgentsFactory, TransportAgentsFactory} from "../utils/transports/transports";
+import {AddButtonsFactory} from "../ui/buttons/buttons";
 
 export class LiveWidgetApi {
   protected activePublisher?: Publisher;
