@@ -11,7 +11,6 @@ import { Backend, Credentials, Profile } from './utils/Backend';
 import { CommonHelper } from './utils/CommonHelper';
 
 export class LiveWidget {
-
   constructor(private env: Env) {
     config.init(env);
   }

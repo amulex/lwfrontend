@@ -4,7 +4,7 @@ import { LiveWidgetApi } from './LiveWidgetApi';
 import { SessionId, Profile } from '../..';
 import { ClientSignals } from '../utils/CallSignals';
 import { MetadataOptions } from '../utils/Metadata';
-import { ViewSettings } from "../utils/Types";
+import { ViewSettings } from '../utils/Types';
 
 /**
  * API for client of tenant that needs in consulting.
