@@ -67,7 +67,7 @@ export class Answer {
   private sendAnswer = async (answerer: WebRtcPeer, sdpOffer: string, to: Connection): Promise<any> => {
 
       // from Openvidu library v.2.8.0
-      const processOffer = (sdpOffer: string): Promise<ConstrainDOMString> => {
+      const processOffer = (): Promise<ConstrainDOMString> => {
           return new Promise((resolve, reject) => {
               const offer: RTCSessionDescriptionInit = {
                   type: 'offer',
@@ -84,21 +84,21 @@ export class Answer {
                   .then(() => {
                       return answerer.pc.createAnswer();
                   }).then((answer: any) => {
-                  console.debug('Created SDP answer');
-                  return answerer.pc.setLocalDescription(answer);
-              }).then(() => {
-                  const localDescription = answerer.pc.localDescription;
-                  if (!!localDescription) {
-                      console.debug('Local description set', localDescription.sdp);
-                      resolve(<string>localDescription.sdp);
-                  } else {
-                      reject('Local description is not defined');
-                  }
-              }).catch((error: any) => reject(error));
+                      console.debug('Created SDP answer');
+                      return answerer.pc.setLocalDescription(answer);
+                  }).then(() => {
+                      const localDescription = answerer.pc.localDescription;
+                      if (!!localDescription) {
+                          console.debug('Local description set', localDescription.sdp);
+                          resolve(localDescription.sdp);
+                      } else {
+                          reject('Local description is not defined');
+                      }
+                  }).catch((error: any) => reject(error));
           });
     };
 
-    const sdpAnswer = await processOffer(sdpOffer);
+    const sdpAnswer = await processOffer();
     return this.signal(to)(IceSignals.Answer, sdpAnswer);
   };
 }
