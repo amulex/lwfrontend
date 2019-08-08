@@ -1,5 +1,5 @@
 import { Connection } from 'openvidu-browser';
-import { WebRtcPeer, WebRtcPeerConfiguration } from 'openvidu-browser/lib/OpenViduInternal/WebRtcPeer/WebRtcPeer';
+import {WebRtcPeer, WebRtcPeerConfiguration} from 'openvidu-browser/lib/OpenViduInternal/WebRtcPeer/WebRtcPeer';
 import { log, MaybePromiseVoid, shallowMerge, Without } from '@devlegal/shared-ts';
 import { OnSignal_SessionFrom, Signal_Session, Signal_SessionTo } from './signal';
 
@@ -65,7 +65,40 @@ export class Answer {
   };
 
   private sendAnswer = async (answerer: WebRtcPeer, sdpOffer: string, to: Connection): Promise<any> => {
-    const sdpAnswer = await answerer.processOffer(sdpOffer);
+
+      // from Openvidu library v.2.8.0
+      const processOffer = (sdpOffer: string): Promise<ConstrainDOMString> => {
+          return new Promise((resolve, reject) => {
+              const offer: RTCSessionDescriptionInit = {
+                  type: 'offer',
+                  sdp: sdpOffer
+              };
+
+              console.debug('SDP offer received, setting remote description');
+
+              if (answerer.pc.signalingState === 'closed') {
+                  reject('PeerConnection is closed');
+              }
+
+              answerer.pc.setRemoteDescription(offer)
+                  .then(() => {
+                      return answerer.pc.createAnswer();
+                  }).then((answer: any) => {
+                  console.debug('Created SDP answer');
+                  return answerer.pc.setLocalDescription(answer);
+              }).then(() => {
+                  const localDescription = answerer.pc.localDescription;
+                  if (!!localDescription) {
+                      console.debug('Local description set', localDescription.sdp);
+                      resolve(<string>localDescription.sdp);
+                  } else {
+                      reject('Local description is not defined');
+                  }
+              }).catch((error: any) => reject(error));
+          });
+    };
+
+    const sdpAnswer = await processOffer(sdpOffer);
     return this.signal(to)(IceSignals.Answer, sdpAnswer);
   };
 }
