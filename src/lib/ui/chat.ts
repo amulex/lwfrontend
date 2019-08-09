@@ -50,7 +50,7 @@ export class TextChatFactory {
 
       if (button) {
           // In case of session changing (call - leave - call again) button should not keep old 'click' listener
-          //button.addEventListener('click', send);
+          // button.addEventListener('click', send);
           button.onclick = send;
       }
 
