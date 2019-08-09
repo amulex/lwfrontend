@@ -30,7 +30,6 @@ export type FileView = FileElements | FileTransportAgent;
 const enterKeyCode = 13;
 
 export class TextChatFactory {
-
   public static init({ input, button, messages }: ChatElements): TextTransportAgent {
     return transport => {
       const send = () => {
@@ -49,9 +48,9 @@ export class TextChatFactory {
       };
 
       if (button) {
-          // In case of session changing (call - leave - call again) button should not keep old 'click' listener
-          // button.addEventListener('click', send);
-          button.onclick = send;
+        // In case of session changing (call - leave - call again) button should not keep old 'click' listener
+        // button.addEventListener('click', send);
+        button.onclick = send;
       }
 
       const handle = ChatHelper.isMessagesElements(messages)

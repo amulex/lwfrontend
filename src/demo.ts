@@ -23,7 +23,7 @@ const elements = {
         const container = DomHelper.query(`#${stream}`);
         const old = container.querySelectorAll(`.widget-templates button.video.toggle`);
         if (old.length > 0) {
-            old.forEach(el => container.removeChild(el));
+          old.forEach(el => container.removeChild(el));
         }
         container.appendChild(element);
         return [element];
