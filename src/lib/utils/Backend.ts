@@ -111,45 +111,15 @@ export class Backend {
     predicate: (role?: RoleString) => boolean,
     fetch: Fetch,
   ): Promise<Connection[]> {
-    const fetchParticipantRoles: FetchParticipantRoles = async connectionIds => {
-      const url = new URL(config.get().paths.backend.participantRoles);
-      FetchHelper.searchParamsAddArray('id[]', connectionIds, url.searchParams);
-      const response = await fetch(url.toString());
-      return response.json();
-    };
-
-    const fetchParticipantRolesCached = ((): FetchParticipantRoles => {
-      const cache: ParticipantRoles = {};
-      return async connectionIds => {
-        const notCachedIds = connectionIds.filter(connectionId => !cache[connectionId]);
-
-        if (notCachedIds.length) {
-          const newRoles = await fetchParticipantRoles(notCachedIds);
-          Object.assign(cache, newRoles);
-        }
-
-        return filterDictionary(cache, (role, id) => connectionIds.includes(id));
-      };
-    })();
 
     const ids = connections.map(c => c.connectionId);
-    const roles = await fetchParticipantRolesCached(ids);
+    const roles = await participantsRolesCache.fetchCached(ids, fetch);
     return connections.filter(connection => predicate(roles[connection.connectionId]));
   }
 
   /**
    * See ImportCdr description on backend for details.
    */
-  /*public static logConnectionFactory(fetch: Fetch) {
-        return async (session: Session): Promise<Response> => {
-            await FetchHelper.postJson(config.get().paths.backend.sessions, {id: session.sessionId}, fetch);
-            return FetchHelper.postJson(config.get().paths.backend.connections, {
-                id: session.connection.connectionId,
-                session: session.sessionId
-            }, fetch);
-        };
-    }*/
-
   public static async logConnection(session: Session, fetch: Fetch): Promise<Response> {
     await FetchHelper.postJson(config.get().paths.backend.sessions, { id: session.sessionId }, fetch);
     return FetchHelper.postJson(
@@ -162,3 +132,28 @@ export class Backend {
     );
   }
 }
+
+class ParticipantsRolesCache {
+    private cache: ParticipantRoles = {};
+
+    private async fetchParticipantRoles(connectionIds: ConnectionId[], fetch: Fetch): Promise<ParticipantRoles> {
+        const url = new URL(config.get().paths.backend.participantRoles);
+        FetchHelper.searchParamsAddArray('id[]', connectionIds, url.searchParams);
+        const response = await fetch(url.toString());
+        return response.json();
+    };
+
+    public async fetchCached(connectionIds: ConnectionId[], fetch: Fetch) {
+        const notCachedIds = connectionIds.filter(connectionId => !this.cache[connectionId]);
+
+        if (notCachedIds.length) {
+            const newRoles = await this.fetchParticipantRoles(notCachedIds, fetch);
+            Object.assign(this.cache, newRoles);
+        }
+
+        return filterDictionary(this.cache, (role, id) => connectionIds.includes(id));
+    }
+
+}
+
+const participantsRolesCache = new ParticipantsRolesCache();
