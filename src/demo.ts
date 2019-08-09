@@ -21,6 +21,10 @@ const elements = {
         const manager = <StreamManager>event.target;
         const stream = CommonHelper.getStream(manager);
         const container = DomHelper.query(`#${stream}`);
+        const old = container.querySelectorAll(`.widget-templates button.video.toggle`);
+        if (old.length > 0) {
+            old.forEach(el => container.removeChild(el));
+        }
         container.appendChild(element);
         return [element];
       },
