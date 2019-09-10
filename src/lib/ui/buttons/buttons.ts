@@ -11,9 +11,6 @@ export type ButtonsPermissions = DeepReadonly<{
       [T in Media]?: boolean;
     };
   };
-  native: {
-    [K in Stream]?: boolean;
-  };
 }>;
 
 export type ButtonConfig = DeepReadonly<{
@@ -78,8 +75,6 @@ export class AddButtonsFactory {
       const streamManager = event.target as StreamManager;
       const stream = CommonHelper.getStream(streamManager);
 
-      AddButtonsFactory.showNativeControls(event.element, permissions, stream);
-
       const streamButtons = buttons.filter(button => button.streams.includes(stream));
       for (const button of streamButtons) {
         const players = button.media.map(media => {
@@ -92,12 +87,6 @@ export class AddButtonsFactory {
         }));
       }
     };
-  }
-
-  private static showNativeControls(element: HTMLVideoElement, permissions: ButtonsPermissions, stream: Stream): void {
-    if (permissions.native[stream]) {
-      element.controls = true;
-    }
   }
 
   /**

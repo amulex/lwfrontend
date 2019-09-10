@@ -130,8 +130,7 @@ export class LiveWidgetApi {
 
         const subscriber = session.subscribe(
           (event as StreamEvent).stream,
-          this.elements.streamsTargets.subscriber,
-          this.profile.settings.streams.subscriber,
+          this.elements.streamsTargets.subscriber
         );
         handleVideoCreating(subscriber);
       });
