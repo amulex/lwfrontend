@@ -80,14 +80,8 @@ type StreamsProperties = DeepReadonly<{
   publisher: Partial<{
     frameRate: number;
     mirror: boolean;
+    resolution: string;
     audioSource: false;
     videoSource: false;
-    publishAudio: boolean;
-    publishVideo: boolean;
-    resolution: string;
-  }>;
-  subscriber: Partial<{
-    subscribeToAudio: boolean;
-    subscribeToVideo: boolean;
   }>;
 }>;
