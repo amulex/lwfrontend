@@ -130,10 +130,7 @@ export class LiveWidgetApi {
           await this.signals.maxParticipants(session);
         }
 
-        const subscriber = session.subscribe(
-          (event as StreamEvent).stream,
-          this.elements.streamsTargets.subscriber
-        );
+        const subscriber = session.subscribe((event as StreamEvent).stream, this.elements.streamsTargets.subscriber);
         handleVideoCreating(subscriber);
       });
     };
