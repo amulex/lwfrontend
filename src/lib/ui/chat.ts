@@ -2,7 +2,7 @@ import { assert, DeepReadonly, setIfObject, DomHelper } from '@devlegal/shared-t
 import { FileTransportAgent, TextTransportAgent } from '../utils/transports/transports';
 import { HandleText } from '../utils/transports/text';
 import { HandleFile } from '../utils/transports/file';
-import { Stream } from "../utils/Types";
+import { Stream } from '../utils/Types';
 
 type HandleMessage = TextTemplateElements | HandleText;
 export type ChatElements = DeepReadonly<{
@@ -41,7 +41,7 @@ export class TextChatFactory {
         input.value = '';
         if (text) {
           if (ChatHelper.isMessagesElements(messages) && messages.onSent) {
-              messages.onSent(text);
+            messages.onSent(text);
           }
           return transport.send({ text, time: new Date() });
         }
@@ -130,7 +130,7 @@ export class FileChatFactory {
 
     // prevent calling onReceive on own messages
     if (onReceived && system.stream === Stream.Subscriber) {
-        onReceived(file, time);
+      onReceived(file, time);
     }
     container.appendChild(newMessage);
   };
