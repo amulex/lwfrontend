@@ -57,6 +57,8 @@ const elements = {
         container: DomHelper.query('#chat .messages'),
         messageTemplate: DomHelper.query('.widget-templates .chat-message'),
         formatTime: (time: Date) => time.toISOString(),
+        onReceived: (text: string, time: Date) => {console.log('RECEIVED MESSAGE', text, time)},
+        onSent: (text: string) => {console.log('SEND MESSAGE', text);}
       },
     },
     file: {
@@ -66,6 +68,8 @@ const elements = {
         messageTemplate: DomHelper.query('.widget-templates .file-message'),
         formatTime: (time: Date) => time.toISOString(),
         formatText: (file: File) => `Download ${file.name}`,
+        onReceived: (file: File, time: Date) => {console.log('RECEIVED FILE', file, time)},
+        onSent: (file: File) => {console.log('SEND FILE', file);}
       },
     },
   },
