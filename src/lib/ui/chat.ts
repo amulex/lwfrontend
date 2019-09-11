@@ -2,8 +2,9 @@ import { assert, DeepReadonly, setIfObject, DomHelper } from '@devlegal/shared-t
 import { FileTransportAgent, TextTransportAgent } from '../utils/transports/transports';
 import { HandleText } from '../utils/transports/text';
 import { HandleFile } from '../utils/transports/file';
+import { Stream } from "../utils/Types";
 
-type HandleMessage = TemplateElements | HandleText;
+type HandleMessage = TextTemplateElements | HandleText;
 export type ChatElements = DeepReadonly<{
   input: HTMLInputElement | HTMLTextAreaElement;
   button?: HTMLElement;
@@ -16,13 +17,16 @@ export type FileElements = DeepReadonly<{
   messages: HandleFileElements;
 }>;
 
-type TemplateElements = DeepReadonly<{
+type TemplateElements<T> = DeepReadonly<{
   container: HTMLElement;
   messageTemplate: HTMLElement;
   formatTime: (time: Date) => string;
+  onReceived?: (data: T, time: Date) => void;
+  onSent?: (data: T) => void;
 }>;
 
-type FileTemplateElements = TemplateElements & { formatText: (f: File) => string };
+type TextTemplateElements = TemplateElements<string>;
+type FileTemplateElements = TemplateElements<File> & { formatText: (f: File) => string };
 
 export type ChatView = ChatElements | TextTransportAgent;
 export type FileView = FileElements | FileTransportAgent;
@@ -37,6 +41,9 @@ export class TextChatFactory {
         const text = input.value.trim();
         input.value = '';
         if (text) {
+          if (ChatHelper.isMessagesElements(messages) && messages.onSent) {
+              messages.onSent(text);
+          }
           return transport.send({ text, time: new Date() });
         }
       };
@@ -61,16 +68,20 @@ export class TextChatFactory {
     };
   }
 
-  private static defaultTextHandlerFactory(messages: TemplateElements): HandleText {
+  private static defaultTextHandlerFactory(messages: TextTemplateElements): HandleText {
     return ({ custom, system }) => {
       const { text, time } = custom;
-      const { messageTemplate, formatTime, container } = messages;
+      const { messageTemplate, formatTime, container, onReceived } = messages;
       const newMessage = DomHelper.clone(messageTemplate);
 
       newMessage.classList.add(system.stream);
       setIfObject(DomHelper.queryMaybe('.time', newMessage), 'textContent', formatTime(time));
       setIfObject(DomHelper.queryMaybe('.message', newMessage), 'textContent', text);
 
+      // prevent calling onReceive on own messages
+      if (onReceived && system.stream === Stream.Subscriber) {
+        onReceived(text, time);
+      }
       container.appendChild(newMessage);
     };
   }
@@ -88,6 +99,9 @@ export class FileChatFactory {
       input.onchange = async () => {
         const files = input.files!;
         for (const file of files) {
+          if (ChatHelper.isFileMessagesElements(messages) && messages.onSent) {
+            messages.onSent(file);
+          }
           await transport.send({ file, time: new Date() });
         }
         input.value = '';
@@ -102,7 +116,7 @@ export class FileChatFactory {
 
   private static defaultFileHandlerFactory = (messages: FileTemplateElements): HandleFile => ({ custom, system }) => {
     const { file, time } = custom;
-    const { messageTemplate, formatTime, formatText, container } = messages;
+    const { messageTemplate, formatTime, formatText, container, onReceived } = messages;
     const newMessage = DomHelper.clone(messageTemplate);
 
     newMessage.classList.add(system.stream);
@@ -115,13 +129,17 @@ export class FileChatFactory {
       anchor.textContent = formatText(file);
     }
 
+    // prevent calling onReceive on own messages
+    if (onReceived && system.stream === Stream.Subscriber) {
+        onReceived(file, time);
+    }
     container.appendChild(newMessage);
   };
 }
 
 export class ChatHelper {
-  public static isMessagesElements<M>(messages: HandleMessage): messages is TemplateElements {
-    return (messages as TemplateElements).messageTemplate !== undefined;
+  public static isMessagesElements<M>(messages: HandleMessage): messages is TextTemplateElements {
+    return (messages as TextTemplateElements).messageTemplate !== undefined;
   }
 
   public static isFileMessagesElements<M>(messages: HandleFileElements): messages is FileTemplateElements {
