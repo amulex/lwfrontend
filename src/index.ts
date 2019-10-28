@@ -1,4 +1,4 @@
-export { LiveWidget } from './lib/LiveWidget';
+export { LiveWidgetFactory } from './lib/LiveWidgetFactory';
 export { ConsultantApi } from './lib/api/ConsultantApi';
 export { ClientApi } from './lib/api/ClientApi';
 export { LiveWidgetApi } from './lib/api/LiveWidgetApi';
@@ -8,5 +8,5 @@ export { Auth } from './lib/utils/Auth';
 export { Login, JwtToken, Profile, Tenant, Backend } from './lib/utils/Backend';
 
 export { SessionId } from './lib/openvidu/openvidu';
-export { ViewSettings, Media, ParticipantType, Stream, SessionParticipant } from './lib/utils/Types';
+export { ViewSettings, Media, ParticipantType, Stream, SessionParticipant, OpenviduNotSupportedError, MediaDevicesNotFoundError } from './lib/utils/Types';
 export { PlayerAction } from './lib/ui/buttons/player';

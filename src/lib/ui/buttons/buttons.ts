@@ -47,7 +47,6 @@ const playerActions: PlayerActions = {
     audio: {
       play: publisher => (publisher as Publisher).publishAudio(true),
       pause: publisher => {
-        console.log('UNPUBLISH PUB AUDIO', publisher);
         (publisher as Publisher).publishAudio(false);
       },
     },
@@ -60,7 +59,6 @@ const playerActions: PlayerActions = {
     audio: {
       play: subscriber => (subscriber as Subscriber).subscribeToAudio(true),
       pause: subscriber => {
-        console.log('UNPUBLISH SUB AUDIO', subscriber);
         (subscriber as Subscriber).subscribeToAudio(false);
       },
     },
@@ -95,7 +93,7 @@ export class AddButtonsFactory {
   }
 
   private static showNativeControls(element: HTMLVideoElement, permissions: ButtonsPermissions, stream: Stream): void {
-    if (permissions.native[stream]) {
+    if (permissions.native && permissions.native[stream]) {
       element.controls = true;
     }
   }
