@@ -85,3 +85,17 @@ type StreamsProperties = DeepReadonly<{
     videoSource: false;
   }>;
 }>;
+
+export class MediaDevicesNotFoundError extends Error {
+    constructor(message?: string) {
+        super(message);
+        Object.setPrototypeOf(this, MediaDevicesNotFoundError.prototype);
+    }
+}
+
+export class OpenviduNotSupportedError extends Error {
+    constructor(message?: string) {
+        super(message);
+        Object.setPrototypeOf(this, OpenviduNotSupportedError.prototype);
+    }
+}

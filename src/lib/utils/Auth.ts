@@ -1,4 +1,4 @@
-import { clone, Fetch, FetchHelper, log } from '@devlegal/shared-ts';
+import {clone, Fetch, FetchHelper, log, MaybePromise} from '@devlegal/shared-ts';
 import { Credentials, JwtToken, Login } from './Backend';
 import { config } from '../../config';
 
@@ -15,8 +15,9 @@ export class Auth {
    *
    * @param token
    * @param decorated Must return response with 401 status as usual, without throwing exception, because it is used for token refreshing
+   * @param persistToken Function called for persisting tokens after refresh
    */
-  public static createAuthFetchFromToken(token: JwtToken, decorated: Fetch = Auth.successfulFetchExcept401): Fetch {
+  private static createAuthFetchFromToken(token: JwtToken, decorated: Fetch = Auth.successfulFetchExcept401, persistToken: PersistToken = () => {}): Fetch {
     const createAuthHeaders = (jwtToken: JwtToken): Headers => {
       const headers = new Headers();
       headers.set('authorization', `Bearer ${jwtToken.token}`);
@@ -25,9 +26,12 @@ export class Auth {
     const refreshHeaders = async (jwtToken: JwtToken): Promise<Headers> => {
       const response = await FetchHelper.postJson(config.get().paths.backend.loginRefresh, jwtToken, decorated);
       const refreshedToken = await response.json();
+      persistToken(token);
       return createAuthHeaders(refreshedToken);
     };
     let authHeaders = createAuthHeaders(token);
+
+    persistToken(token);
 
     return async (url, passedInit?) => {
       const init = passedInit ? clone(passedInit) : {};
@@ -48,8 +52,8 @@ export class Auth {
     return response.status === 401 && detail.toLowerCase().includes('expire');
   };
 
-  public static createAuthFetch = async (credentials: Credentials): Promise<Fetch> =>
-    Auth.createAuthFetchFromToken(await Auth.getToken(credentials));
+  public static createAuthFetch = async (credentials: Credentials, persistToken: PersistToken = () => {}): Promise<Fetch> =>
+    Auth.createAuthFetchFromToken(await Auth.getToken(credentials), Auth.successfulFetchExcept401, persistToken);
 
   private static getToken = async (credentials: Credentials): Promise<JwtToken> => {
     if (Auth.isToken(credentials)) {
@@ -71,3 +75,5 @@ export class Auth {
     return response.json();
   }
 }
+
+type PersistToken = (token: JwtToken) => MaybePromise<void>;
