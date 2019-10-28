@@ -153,13 +153,13 @@ const run = async () => {
             answerButton.disabled = true;
         });
 
-    await consultantApi.onParticipantLeft('all', (metadata: ParticipantMetadata, c: Connection) => {
-        consultantApi.leave();
-        leaveButton.disabled = true;
-    });
+        await consultantApi.onParticipantLeft('all', (metadata: ParticipantMetadata, c: Connection) => {
+            consultantApi.leave();
+            leaveButton.disabled = true;
+        });
 
-    await consultantApi.onAnsweredCall((metadata: any) => log('answer', metadata));
-};
+        await consultantApi.onAnsweredCall((metadata: any) => log('answer', metadata));
+    };
 
     clientButton.onclick = async () => {
         clientButton.disabled = true;
@@ -169,12 +169,12 @@ const run = async () => {
         callButton.disabled = false;
         callAudioButton.disabled = false;
 
-    clientApi.onParticipantLeft('all', (metadata: ParticipantMetadata, c: Connection) => {
-        console.log('Participant left...', metadata);
-        clientApi.leave();
-        leaveButton.disabled = true;
-        callButton.disabled = false;
-    });
+        clientApi.onParticipantLeft('all', (metadata: ParticipantMetadata, c: Connection) => {
+            console.log('Participant left...', metadata);
+            clientApi.leave();
+            leaveButton.disabled = true;
+            callButton.disabled = false;
+        });
 
         callButton.onclick = async () => {
             callButton.disabled = true;

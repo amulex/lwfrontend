@@ -9,19 +9,19 @@ import {Media, MediaDevicesNotFoundError, OpenviduNotSupportedError, Participant
 import {PlayerAction} from "./lib/ui/buttons/player";
 
 export default {
-    LiveWidgetFactory: LiveWidgetFactory,
-    ConsultantApi: ConsultantApi,
-    ClientApi: ClientApi,
-    LiveWidgetApi: LiveWidgetApi,
-    MetadataHelper: MetadataHelper,
-    Auth: Auth,
-    Backend: Backend,
-    Media: Media,
-    ParticipantType: ParticipantType,
-    Stream: Stream,
-    PlayerAction: PlayerAction,
+    LiveWidgetFactory,
+    ConsultantApi,
+    ClientApi,
+    LiveWidgetApi,
+    MetadataHelper,
+    Auth,
+    Backend,
+    Media,
+    ParticipantType,
+    Stream,
+    PlayerAction,
 
     // errors
-    OpenviduNotSupportedError: OpenviduNotSupportedError,
-    MediaDevicesNotFoundError: MediaDevicesNotFoundError
+    OpenviduNotSupportedError,
+    MediaDevicesNotFoundError
 }
