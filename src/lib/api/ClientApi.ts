@@ -5,6 +5,7 @@ import { SessionId, Profile } from '../..';
 import { ClientSignals } from '../utils/CallSignals';
 import { MetadataOptions } from '../utils/Metadata';
 import { ViewSettings } from "../utils/Types";
+import {MediaDevicesChecker} from "../utils/MediaDevicesChecker";
 
 /**
  * API for client of tenant that needs in consulting.
@@ -23,9 +24,10 @@ export class ClientApi extends LiveWidgetApi {
     protected elements: ViewSettings,
     protected connectOptions: ConnectOptions,
     protected metadataOptions: MetadataOptions,
+    protected mediaDevicesChecker: MediaDevicesChecker,
     protected signals: ClientSignals,
   ) {
-    super(authFetch, profile, elements, connectOptions, metadataOptions, signals);
+    super(authFetch, profile, elements, connectOptions, metadataOptions, mediaDevicesChecker, signals);
   }
 
   /**

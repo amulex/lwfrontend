@@ -14,6 +14,7 @@ import { ParticipantType, ViewSettings } from '../utils/Types';
 import { HandleMetadata, MetadataHelper, MetadataOptions } from '../utils/Metadata';
 import {BindTransportAgentsFactory, TransportAgentsFactory} from "../utils/transports/transports";
 import {AddButtonsFactory} from "../ui/buttons/buttons";
+import {MediaDevicesChecker} from "../utils/MediaDevicesChecker";
 
 export class LiveWidgetApi {
   protected activePublisher?: Publisher;
@@ -26,10 +27,19 @@ export class LiveWidgetApi {
     protected elements: ViewSettings,
     protected connectOptions: ConnectOptions,
     protected metadataOptions: MetadataOptions,
+    protected mediaDevicesChecker: MediaDevicesChecker,
     protected signals: CallSignals,
     private aWindow: Window = window,
   ) {
     aWindow.addEventListener('unload', () => this.disconnect());
+  }
+
+  public async isCameraAvailable(): Promise<boolean> {
+    return this.mediaDevicesChecker.isCameraAvailable();
+  }
+
+  public async isMicrophoneAvailable(): Promise<boolean> {
+    return this.mediaDevicesChecker.isMicrophoneAvailable();
   }
 
   public onParticipantLeft(type: ParticipantType | 'all', handle: HandleMetadata) {
@@ -91,7 +101,7 @@ export class LiveWidgetApi {
     return this.activePublisher ? this.activePublisher.session : undefined;
   }
 
-  private async connectAllToAll(connectOptions: ConnectOptions, customProperties = {}) {
+  private async connectAllToAll(connectOptions: ConnectOptions, customProperties: PublisherProperties = {}) {
     const handleMetadata = this.handleMetadataFactory(this.metadataOptions, this.authFetch);
     const addButtons = AddButtonsFactory.create(this.profile.settings.buttons, this.elements.buttons || []);
 
@@ -141,6 +151,13 @@ export class LiveWidgetApi {
     const connector = ConnectToSessionFactory.create(this.authFetch);
     const beforeConnect = combineProcedures(bindTransportAgents, onStreamCreated);
     const openviduSession = await connector(beforeConnect)(connectOptions);
+
+    if ( ! (await this.isCameraAvailable())) {
+      customProperties.videoSource = false;
+    }
+    if ( ! (await this.isMicrophoneAvailable())) {
+      customProperties.audioSource = false;
+    }
 
     const properties = shallowMerge(this.profile.settings.streams.publisher, customProperties);
     const publisher = await openviduSession.openvidu.initPublisherAsync(

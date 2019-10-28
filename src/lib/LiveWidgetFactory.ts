@@ -4,16 +4,35 @@ import { ClientApi } from './api/ClientApi';
 import { ConsultantApi } from './api/ConsultantApi';
 import { openviduGlobal } from './openvidu/openvidu';
 import { ClientSignals, ConsultantSignals } from './utils/CallSignals';
-import { ParticipantMap, ParticipantType, ViewSettings } from './utils/Types';
+import {
+    MediaDevicesNotFoundError, OpenviduNotSupportedError, ParticipantMap, ParticipantType,
+    ViewSettings
+} from './utils/Types';
 import { MetadataHelper, MetadataOptions } from './utils/Metadata';
 import { Auth } from './utils/Auth';
 import { Backend, Credentials, Profile } from './utils/Backend';
 import { CommonHelper } from './utils/CommonHelper';
+import {MediaDevicesChecker} from "./utils/MediaDevicesChecker";
 
-export class LiveWidget {
+export class LiveWidgetFactory {
 
-  constructor(private env: Env) {
+  private constructor(private env: Env,
+                      private mediaDevicesChecker: MediaDevicesChecker) {}
+
+  public static async create(env: Env) {
     config.init(env);
+
+    if (openviduGlobal.checkSystemRequirements() !== 1) {
+      throw new OpenviduNotSupportedError("OpenVidu isn't supported. LiveWidget will not work...");
+    }
+
+    const mediaDevicesChecker = new MediaDevicesChecker();
+    const isDevicesAvailable = await mediaDevicesChecker.isMediaDevicesAvailable();
+    if (!isDevicesAvailable) {
+        throw new MediaDevicesNotFoundError('Unable to find media devices. LiveWidget will not work...');
+    }
+
+    return new LiveWidgetFactory(env, mediaDevicesChecker);
   }
 
   /**
@@ -36,7 +55,6 @@ export class LiveWidget {
     metadataOptions: MetadataOptions = {},
   ): Promise<ParticipantMap[K]> {
     const profile = await Backend.fetchProfile(authFetch);
-    assert(openviduGlobal.checkSystemRequirements() === 1, "OpenVidu isn't supported");
     assert(
       type !== ParticipantType.Consultant || CommonHelper.isConsultantRole(profile.role.role),
       `Consultant must have role ROLE_CONSULTANT, but ${profile.role.role} given`,
@@ -61,6 +79,7 @@ export class LiveWidget {
       elements,
       connectOptions,
       metadataOptions,
+      this.mediaDevicesChecker,
       signals as ConsultantSignals & ClientSignals,
     );
   }

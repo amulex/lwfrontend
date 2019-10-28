@@ -26,6 +26,7 @@
   },
   "scripts": {
     "build": "tsc -p .",
+    "build.amo": "webpack --config webpack.amo.config.js",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "prepare": "npm run build",

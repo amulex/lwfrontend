@@ -5,6 +5,7 @@ import { ConsultantSignals } from '../utils/CallSignals';
 import { Profile } from '../utils/Backend';
 import { SessionParticipant, ViewSettings } from '../utils/Types';
 import { MetadataOptions } from '../utils/Metadata';
+import {MediaDevicesChecker} from "../utils/MediaDevicesChecker";
 
 /**
  * Callback, calling of which will produce answer to the call.
@@ -33,9 +34,10 @@ export class ConsultantApi extends LiveWidgetApi {
     protected elements: ViewSettings,
     protected connectOptions: ConnectOptions,
     protected metadataOptions: MetadataOptions,
+    protected mediaDevicesChecker: MediaDevicesChecker,
     protected signals: ConsultantSignals,
   ) {
-    super(authFetch, profile, elements, connectOptions, metadataOptions, signals);
+    super(authFetch, profile, elements, connectOptions, metadataOptions, mediaDevicesChecker, signals);
   }
 
   /**
