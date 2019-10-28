@@ -8,5 +8,13 @@ export { Auth } from './lib/utils/Auth';
 export { Login, JwtToken, Profile, Tenant, Backend } from './lib/utils/Backend';
 
 export { SessionId } from './lib/openvidu/openvidu';
-export { ViewSettings, Media, ParticipantType, Stream, SessionParticipant, OpenviduNotSupportedError, MediaDevicesNotFoundError } from './lib/utils/Types';
+export {
+  ViewSettings,
+  Media,
+  ParticipantType,
+  Stream,
+  SessionParticipant,
+  OpenviduNotSupportedError,
+  MediaDevicesNotFoundError,
+} from './lib/utils/Types';
 export { PlayerAction } from './lib/ui/buttons/player';

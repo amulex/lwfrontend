@@ -14,9 +14,9 @@ import {
 import { Backend, Profile, Tenant } from '../utils/Backend';
 import { ParticipantType, ViewSettings } from '../utils/Types';
 import { HandleMetadata, MetadataHelper, MetadataOptions } from '../utils/Metadata';
-import { BindTransportAgentsFactory, TransportAgentsFactory} from '../utils/transports/transports';
-import { AddButtonsFactory} from '../ui/buttons/buttons';
-import { MediaDevicesChecker} from "../utils/MediaDevicesChecker";
+import { BindTransportAgentsFactory, TransportAgentsFactory } from '../utils/transports/transports';
+import { AddButtonsFactory } from '../ui/buttons/buttons';
+import { MediaDevicesChecker } from '../utils/MediaDevicesChecker';
 
 export class LiveWidgetApi {
   protected activePublisher?: Publisher;
@@ -151,10 +151,10 @@ export class LiveWidgetApi {
     const beforeConnect = combineProcedures(bindTransportAgents, onStreamCreated);
     const openviduSession = await connector(beforeConnect)(connectOptions);
 
-    if ( ! (await this.isCameraAvailable())) {
+    if (!(await this.isCameraAvailable())) {
       customProperties.videoSource = false;
     }
-    if ( ! (await this.isMicrophoneAvailable())) {
+    if (!(await this.isMicrophoneAvailable())) {
       customProperties.audioSource = false;
     }
 

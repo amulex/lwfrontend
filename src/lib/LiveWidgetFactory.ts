@@ -5,19 +5,20 @@ import { ConsultantApi } from './api/ConsultantApi';
 import { openviduGlobal } from './openvidu/openvidu';
 import { ClientSignals, ConsultantSignals } from './utils/CallSignals';
 import {
-    MediaDevicesNotFoundError, OpenviduNotSupportedError, ParticipantMap, ParticipantType,
-    ViewSettings
+  MediaDevicesNotFoundError,
+  OpenviduNotSupportedError,
+  ParticipantMap,
+  ParticipantType,
+  ViewSettings,
 } from './utils/Types';
 import { MetadataHelper, MetadataOptions } from './utils/Metadata';
 import { Auth } from './utils/Auth';
 import { Backend, Credentials, Profile } from './utils/Backend';
 import { CommonHelper } from './utils/CommonHelper';
-import {MediaDevicesChecker} from "./utils/MediaDevicesChecker";
+import { MediaDevicesChecker } from './utils/MediaDevicesChecker';
 
 export class LiveWidgetFactory {
-
-  private constructor(private env: Env,
-                      private mediaDevicesChecker: MediaDevicesChecker) {}
+  private constructor(private env: Env, private mediaDevicesChecker: MediaDevicesChecker) {}
 
   public static async create(env: Env) {
     config.init(env);
@@ -29,7 +30,7 @@ export class LiveWidgetFactory {
     const mediaDevicesChecker = new MediaDevicesChecker();
     const isDevicesAvailable = await mediaDevicesChecker.isMediaDevicesAvailable();
     if (!isDevicesAvailable) {
-        throw new MediaDevicesNotFoundError('Unable to find media devices. LiveWidget will not work...');
+      throw new MediaDevicesNotFoundError('Unable to find media devices. LiveWidget will not work...');
     }
 
     return new LiveWidgetFactory(env, mediaDevicesChecker);

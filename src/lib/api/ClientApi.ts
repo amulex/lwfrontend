@@ -5,7 +5,7 @@ import { SessionId, Profile } from '../..';
 import { ClientSignals } from '../utils/CallSignals';
 import { MetadataOptions } from '../utils/Metadata';
 import { ViewSettings } from '../utils/Types';
-import {MediaDevicesChecker} from "../utils/MediaDevicesChecker";
+import { MediaDevicesChecker } from '../utils/MediaDevicesChecker';
 
 /**
  * API for client of tenant that needs in consulting.

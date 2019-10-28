@@ -5,7 +5,7 @@ import { ConsultantSignals } from '../utils/CallSignals';
 import { Profile } from '../utils/Backend';
 import { SessionParticipant, ViewSettings } from '../utils/Types';
 import { MetadataOptions } from '../utils/Metadata';
-import {MediaDevicesChecker} from "../utils/MediaDevicesChecker";
+import { MediaDevicesChecker } from '../utils/MediaDevicesChecker';
 
 /**
  * Callback, calling of which will produce answer to the call.
