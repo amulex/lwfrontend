@@ -18,31 +18,30 @@ import { CommonHelper } from './utils/CommonHelper';
 import { MediaDevicesChecker } from './utils/MediaDevicesChecker';
 
 export class LiveWidgetFactory {
-
   private mediaDevicesChecker: MediaDevicesChecker;
 
   constructor(private env: Env) {
-      config.init(env);
-      this.mediaDevicesChecker = new MediaDevicesChecker();
+    config.init(env);
+    this.mediaDevicesChecker = new MediaDevicesChecker();
   }
 
-    /**
-     * Checks requirements for LiveWidget:
-     * 1) Openvidu support
-     * 2) Presence of at least one media device
-     *
-     * @returns {Promise<void>}
-     * @throws MediaDevicesNotFoundError | OpenviduNotSupportedError
-     */
+  /**
+   * Checks requirements for LiveWidget:
+   * 1) Openvidu support
+   * 2) Presence of at least one media device
+   *
+   * @returns {Promise<void>}
+   * @throws MediaDevicesNotFoundError | OpenviduNotSupportedError
+   */
   public async checkRequirements(): Promise<void> {
-      if (openviduGlobal.checkSystemRequirements() !== 1) {
-          throw new OpenviduNotSupportedError("OpenVidu isn't supported. LiveWidget will not work...");
-      }
+    if (openviduGlobal.checkSystemRequirements() !== 1) {
+      throw new OpenviduNotSupportedError("OpenVidu isn't supported. LiveWidget will not work...");
+    }
 
-      const isDevicesAvailable = await this.mediaDevicesChecker.isMediaDevicesAvailable();
-      if (!isDevicesAvailable) {
-          throw new MediaDevicesNotFoundError('Unable to find media devices. LiveWidget will not work...');
-      }
+    const isDevicesAvailable = await this.mediaDevicesChecker.isMediaDevicesAvailable();
+    if (!isDevicesAvailable) {
+      throw new MediaDevicesNotFoundError('Unable to find media devices. LiveWidget will not work...');
+    }
   }
 
   /**

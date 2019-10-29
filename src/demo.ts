@@ -107,14 +107,13 @@ const run = async () => {
     handle: (md: ParticipantMetadata, conn: Connection) => log('Handle metadata:', md, conn),
   };
 
-    const lw: LiveWidgetFactory = new LiveWidgetFactory(env);
-    try {
-        await lw.checkRequirements();
-    }
-    catch (e) {
-        alert(e.message);
-        return;
-    }
+  const lw: LiveWidgetFactory = new LiveWidgetFactory(env);
+  try {
+    await lw.checkRequirements();
+  } catch (e) {
+    alert(e.message);
+    return;
+  }
 
   let clientApi: ClientApi;
   let consultantApi: ConsultantApi;
