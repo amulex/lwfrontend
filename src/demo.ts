@@ -107,16 +107,14 @@ const run = async () => {
     handle: (md: ParticipantMetadata, conn: Connection) => log('Handle metadata:', md, conn),
   };
 
-  let lw: LiveWidgetFactory;
-  try {
-    lw = await LiveWidgetFactory.create(env);
-  } catch (e) {
-    if (e instanceof MediaDevicesNotFoundError || e instanceof OpenviduNotSupportedError) {
-      alert(e.message);
-      return;
+    const lw: LiveWidgetFactory = new LiveWidgetFactory(env);
+    try {
+        await lw.checkRequirements();
     }
-    throw e;
-  }
+    catch (e) {
+        alert(e.message);
+        return;
+    }
 
   let clientApi: ClientApi;
   let consultantApi: ConsultantApi;
