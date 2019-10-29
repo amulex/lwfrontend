@@ -1,4 +1,4 @@
-import {clone, Fetch, FetchHelper, log, MaybePromise} from '@devlegal/shared-ts';
+import { clone, Fetch, FetchHelper, log, MaybePromise } from '@devlegal/shared-ts';
 import { Credentials, JwtToken, Login } from './Backend';
 import { config } from '../../config';
 
@@ -17,7 +17,11 @@ export class Auth {
    * @param decorated Must return response with 401 status as usual, without throwing exception, because it is used for token refreshing
    * @param persistToken Function called for persisting tokens after refresh
    */
-  private static createAuthFetchFromToken(token: JwtToken, decorated: Fetch = Auth.successfulFetchExcept401, persistToken: PersistToken = () => {}): Fetch {
+  private static createAuthFetchFromToken(
+    token: JwtToken,
+    decorated: Fetch = Auth.successfulFetchExcept401,
+    persistToken: PersistToken = () => {},
+  ): Fetch {
     const createAuthHeaders = (jwtToken: JwtToken): Headers => {
       const headers = new Headers();
       headers.set('authorization', `Bearer ${jwtToken.token}`);
@@ -52,7 +56,10 @@ export class Auth {
     return response.status === 401 && detail.toLowerCase().includes('expire');
   };
 
-  public static createAuthFetch = async (credentials: Credentials, persistToken: PersistToken = () => {}): Promise<Fetch> =>
+  public static createAuthFetch = async (
+    credentials: Credentials,
+    persistToken: PersistToken = () => {},
+  ): Promise<Fetch> =>
     Auth.createAuthFetchFromToken(await Auth.getToken(credentials), Auth.successfulFetchExcept401, persistToken);
 
   private static getToken = async (credentials: Credentials): Promise<JwtToken> => {

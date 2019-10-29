@@ -2,7 +2,7 @@ import { assert, DeepReadonly, setIfObject, DomHelper } from '@devlegal/shared-t
 import { FileTransportAgent, TextTransportAgent } from '../utils/transports/transports';
 import { HandleText } from '../utils/transports/text';
 import { HandleFile } from '../utils/transports/file';
-import { Stream } from "../utils/Types";
+import { Stream } from '../utils/Types';
 
 type HandleMessage = TextTemplateElements | HandleText;
 export type ChatElements = DeepReadonly<{
@@ -34,7 +34,6 @@ export type FileView = FileElements | FileTransportAgent;
 const enterKeyCode = 13;
 
 export class TextChatFactory {
-
   public static init({ input, button, messages }: ChatElements): TextTransportAgent {
     return transport => {
       const send = () => {
@@ -42,7 +41,7 @@ export class TextChatFactory {
         input.value = '';
         if (text) {
           if (ChatHelper.isMessagesElements(messages) && messages.onSent) {
-              messages.onSent(text);
+            messages.onSent(text);
           }
           return transport.send({ text, time: new Date() });
         }
@@ -56,9 +55,9 @@ export class TextChatFactory {
       };
 
       if (button) {
-          // In case of session changing (call - leave - call again) button should not keep old 'click' listener
-          // button.addEventListener('click', send);
-          button.onclick = send;
+        // In case of session changing (call - leave - call again) button should not keep old 'click' listener
+        // button.addEventListener('click', send);
+        button.onclick = send;
       }
 
       const handle = ChatHelper.isMessagesElements(messages)
@@ -131,7 +130,7 @@ export class FileChatFactory {
 
     // prevent calling onReceive on own messages
     if (onReceived && system.stream === Stream.Subscriber) {
-        onReceived(file, time);
+      onReceived(file, time);
     }
     container.appendChild(newMessage);
   };

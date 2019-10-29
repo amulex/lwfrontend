@@ -1,20 +1,22 @@
-import {CallSignals} from '../utils/CallSignals';
-import {combineProcedures, ConnectOptions, Fetch, getProp, log, noop, shallowMerge, size} from '@devlegal/shared-ts';
-import {ConnectToSessionFactory, HandleVideoElementEvent} from '../openvidu/openvidu';
+import { CallSignals } from '../utils/CallSignals';
+import { combineProcedures, ConnectOptions, Fetch, getProp, log, noop, shallowMerge, size } from '@devlegal/shared-ts';
+import { ConnectToSessionFactory, HandleVideoElementEvent } from '../openvidu/openvidu';
 import {
-    Connection,
-    Publisher,
-    PublisherProperties,
-    Session,
-    StreamEvent, StreamManager,
-    Subscriber, VideoElementEvent,
+  Connection,
+  Publisher,
+  PublisherProperties,
+  Session,
+  StreamEvent,
+  StreamManager,
+  Subscriber,
+  VideoElementEvent,
 } from 'openvidu-browser';
 import { Backend, Profile, Tenant } from '../utils/Backend';
 import { ParticipantType, ViewSettings } from '../utils/Types';
 import { HandleMetadata, MetadataHelper, MetadataOptions } from '../utils/Metadata';
-import {BindTransportAgentsFactory, TransportAgentsFactory} from "../utils/transports/transports";
-import {AddButtonsFactory} from "../ui/buttons/buttons";
-import {MediaDevicesChecker} from "../utils/MediaDevicesChecker";
+import { BindTransportAgentsFactory, TransportAgentsFactory } from '../utils/transports/transports';
+import { AddButtonsFactory } from '../ui/buttons/buttons';
+import { MediaDevicesChecker } from '../utils/MediaDevicesChecker';
 
 export class LiveWidgetApi {
   protected activePublisher?: Publisher;
@@ -138,10 +140,7 @@ export class LiveWidgetApi {
           await this.signals.maxParticipants(session);
         }
 
-        const subscriber = session.subscribe(
-          (event as StreamEvent).stream,
-          this.elements.streamsTargets.subscriber
-        );
+        const subscriber = session.subscribe((event as StreamEvent).stream, this.elements.streamsTargets.subscriber);
         handleVideoCreating(subscriber);
       });
     };
@@ -152,10 +151,10 @@ export class LiveWidgetApi {
     const beforeConnect = combineProcedures(bindTransportAgents, onStreamCreated);
     const openviduSession = await connector(beforeConnect)(connectOptions);
 
-    if ( ! (await this.isCameraAvailable())) {
+    if (!(await this.isCameraAvailable())) {
       customProperties.videoSource = false;
     }
-    if ( ! (await this.isMicrophoneAvailable())) {
+    if (!(await this.isMicrophoneAvailable())) {
       customProperties.audioSource = false;
     }
 

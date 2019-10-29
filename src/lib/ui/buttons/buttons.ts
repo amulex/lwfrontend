@@ -85,9 +85,11 @@ export class AddButtonsFactory {
           return new SimplePlayer(() => actions.play(streamManager), () => actions.pause(streamManager));
         });
         const player = new CompositePlayer(players);
-        button.elements(event).forEach(el => el.addEventListener('click', () => {
-          player[button.action]();
-        }));
+        button.elements(event).forEach(el =>
+          el.addEventListener('click', () => {
+            player[button.action]();
+          }),
+        );
       }
     };
   }

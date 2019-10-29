@@ -5,41 +5,43 @@ import { ConsultantApi } from './api/ConsultantApi';
 import { openviduGlobal } from './openvidu/openvidu';
 import { ClientSignals, ConsultantSignals } from './utils/CallSignals';
 import {
-    MediaDevicesNotFoundError, OpenviduNotSupportedError, ParticipantMap, ParticipantType,
-    ViewSettings
+  MediaDevicesNotFoundError,
+  OpenviduNotSupportedError,
+  ParticipantMap,
+  ParticipantType,
+  ViewSettings,
 } from './utils/Types';
 import { MetadataHelper, MetadataOptions } from './utils/Metadata';
 import { Auth } from './utils/Auth';
 import { Backend, Credentials, Profile } from './utils/Backend';
 import { CommonHelper } from './utils/CommonHelper';
-import {MediaDevicesChecker} from "./utils/MediaDevicesChecker";
+import { MediaDevicesChecker } from './utils/MediaDevicesChecker';
 
 export class LiveWidgetFactory {
-
   private mediaDevicesChecker: MediaDevicesChecker;
 
   constructor(private env: Env) {
-      config.init(env);
-      this.mediaDevicesChecker = new MediaDevicesChecker();
+    config.init(env);
+    this.mediaDevicesChecker = new MediaDevicesChecker();
   }
 
-    /**
-     * Checks requirements for LiveWidget:
-     * 1) Openvidu support
-     * 2) Presence of at least one media device
-     *
-     * @returns {Promise<void>}
-     * @throws MediaDevicesNotFoundError | OpenviduNotSupportedError
-     */
+  /**
+   * Checks requirements for LiveWidget:
+   * 1) Openvidu support
+   * 2) Presence of at least one media device
+   *
+   * @returns {Promise<void>}
+   * @throws MediaDevicesNotFoundError | OpenviduNotSupportedError
+   */
   public async checkRequirements(): Promise<void> {
-      if (openviduGlobal.checkSystemRequirements() !== 1) {
-          throw new OpenviduNotSupportedError("OpenVidu isn't supported. LiveWidget will not work...");
-      }
+    if (openviduGlobal.checkSystemRequirements() !== 1) {
+      throw new OpenviduNotSupportedError("OpenVidu isn't supported. LiveWidget will not work...");
+    }
 
-      const isDevicesAvailable = await this.mediaDevicesChecker.isMediaDevicesAvailable();
-      if (!isDevicesAvailable) {
-          throw new MediaDevicesNotFoundError('Unable to find media devices. LiveWidget will not work...');
-      }
+    const isDevicesAvailable = await this.mediaDevicesChecker.isMediaDevicesAvailable();
+    if (!isDevicesAvailable) {
+      throw new MediaDevicesNotFoundError('Unable to find media devices. LiveWidget will not work...');
+    }
   }
 
   /**
