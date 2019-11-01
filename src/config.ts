@@ -1,5 +1,6 @@
 import underscore from 'underscore';
 import { assert, lazy } from '@devlegal/shared-ts';
+import { WidgetStorageSettings } from './lib/utils/Storage';
 
 export type Env = {
   host: {
@@ -8,20 +9,6 @@ export type Env = {
   };
   storage: WidgetStorageSettings;
 };
-
-export type WidgetStorageSettings =
-  | {
-      type: WidgetStorageType.COOKIES;
-      expires?: number;
-    }
-  | {
-      type: WidgetStorageType.LOCAL_STORAGE;
-    };
-
-export enum WidgetStorageType {
-  LOCAL_STORAGE,
-  COOKIES,
-}
 
 class Config {
   private env: Env | undefined;
