@@ -13,6 +13,7 @@ import {
   Stream,
 } from './lib/utils/Types';
 import { PlayerAction } from './lib/ui/buttons/player';
+import { WidgetStorageType } from './lib/utils/Storage';
 
 export default {
   LiveWidgetFactory,
@@ -26,6 +27,7 @@ export default {
   ParticipantType,
   Stream,
   PlayerAction,
+  WidgetStorageType,
 
   // errors
   OpenviduNotSupportedError,

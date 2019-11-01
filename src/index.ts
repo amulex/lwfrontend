@@ -18,3 +18,4 @@ export {
   MediaDevicesNotFoundError,
 } from './lib/utils/Types';
 export { PlayerAction } from './lib/ui/buttons/player';
+export { WidgetStorageType } from './lib/utils/Storage';

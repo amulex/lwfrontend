@@ -1,5 +1,5 @@
 import { assert, ConnectOptions, Fetch, shallowMerge } from '@devlegal/shared-ts';
-import { config, Env, WidgetStorageType } from '../config';
+import { config, Env } from '../config';
 import { ClientApi } from './api/ClientApi';
 import { ConsultantApi } from './api/ConsultantApi';
 import { openviduGlobal } from './openvidu/openvidu';
@@ -16,7 +16,7 @@ import { Auth } from './utils/Auth';
 import { Backend, Credentials, Profile } from './utils/Backend';
 import { CommonHelper } from './utils/CommonHelper';
 import { MediaDevicesChecker } from './utils/MediaDevicesChecker';
-import { CookiesStorage, LocalStorage } from './utils/Storage';
+import { CookiesStorage, LocalStorage, WidgetStorageType } from './utils/Storage';
 
 export class LiveWidgetFactory {
   private mediaDevicesChecker: MediaDevicesChecker;
