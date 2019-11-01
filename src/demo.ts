@@ -2,12 +2,7 @@ import { Connection, OpenViduError, Publisher, StreamManager, VideoElementEvent 
 import { assert, log, DomHelper } from '@devlegal/shared-ts';
 import { config } from './env';
 import { PlayerAction } from './lib/ui/buttons/player';
-import {
-  Media,
-  ParticipantType,
-  SessionParticipant,
-  Stream,
-} from './lib/utils/Types';
+import { Media, ParticipantType, SessionParticipant, Stream } from './lib/utils/Types';
 import { ParticipantMetadata } from './lib/utils/Metadata';
 import { ClientApi } from './lib/api/ClientApi';
 import { ConsultantApi } from './lib/api/ConsultantApi';
