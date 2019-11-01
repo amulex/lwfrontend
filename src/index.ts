@@ -3,7 +3,7 @@ export { ConsultantApi } from './lib/api/ConsultantApi';
 export { ClientApi } from './lib/api/ClientApi';
 export { LiveWidgetApi } from './lib/api/LiveWidgetApi';
 
-export { MetadataHelper, MetadataOptions, ParticipantMetadata } from './lib/utils/Metadata';
+export { MetadataBuilder, MetadataOptions, ParticipantMetadata } from './lib/utils/Metadata';
 export { Auth } from './lib/utils/Auth';
 export { Login, JwtToken, Profile, Tenant, Backend } from './lib/utils/Backend';
 

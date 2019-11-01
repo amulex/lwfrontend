@@ -2,7 +2,7 @@ import { LiveWidgetFactory } from './lib/LiveWidgetFactory';
 import { ConsultantApi } from './lib/api/ConsultantApi';
 import { ClientApi } from './lib/api/ClientApi';
 import { LiveWidgetApi } from './lib/api/LiveWidgetApi';
-import { MetadataHelper } from './lib/utils/Metadata';
+import { MetadataBuilder } from './lib/utils/Metadata';
 import { Auth } from './lib/utils/Auth';
 import { Backend } from './lib/utils/Backend';
 import {
@@ -19,7 +19,7 @@ export default {
   ConsultantApi,
   ClientApi,
   LiveWidgetApi,
-  MetadataHelper,
+  MetadataBuilder,
   Auth,
   Backend,
   Media,

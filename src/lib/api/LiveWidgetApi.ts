@@ -13,7 +13,7 @@ import {
 } from 'openvidu-browser';
 import { Backend, Profile, Tenant } from '../utils/Backend';
 import { ParticipantType, ViewSettings } from '../utils/Types';
-import { HandleMetadata, MetadataHelper, MetadataOptions } from '../utils/Metadata';
+import { HandleMetadata, MetadataBuilder, MetadataOptions } from '../utils/Metadata';
 import { BindTransportAgentsFactory, TransportAgentsFactory } from '../utils/transports/transports';
 import { AddButtonsFactory } from '../ui/buttons/buttons';
 import { MediaDevicesChecker } from '../utils/MediaDevicesChecker';
@@ -85,7 +85,7 @@ export class LiveWidgetApi {
 
     const handleParticipantLeft = (connection: Connection) => {
       this.participantLeftHandlers.forEach(handler => {
-        const metadata = MetadataHelper.get(connection);
+        const metadata = MetadataBuilder.get(connection);
         if (handler.type === 'all' || metadata.system.type === handler.type) {
           // prevent sending to oneself
           if (metadata.system.profile.email !== this.profile.email) {
@@ -175,7 +175,7 @@ export class LiveWidgetApi {
       const streamManager = event.target;
       if (streamManager instanceof Subscriber) {
         const handle = options.handle || noop;
-        const data = MetadataHelper.get(streamManager.stream.connection);
+        const data = MetadataBuilder.get(streamManager.stream.connection);
         const userInfo = await Backend.fetchUserInfo(fetch, data.system.profile.email);
         data.system.profile.avatar = userInfo.avatar;
         return handle(data, streamManager.stream.connection);

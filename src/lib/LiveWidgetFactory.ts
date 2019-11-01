@@ -1,5 +1,5 @@
 import { assert, ConnectOptions, Fetch, shallowMerge } from '@devlegal/shared-ts';
-import { config, Env } from '../config';
+import { config, Env, WidgetStorageType } from '../config';
 import { ClientApi } from './api/ClientApi';
 import { ConsultantApi } from './api/ConsultantApi';
 import { openviduGlobal } from './openvidu/openvidu';
@@ -11,18 +11,23 @@ import {
   ParticipantType,
   ViewSettings,
 } from './utils/Types';
-import { MetadataHelper, MetadataOptions } from './utils/Metadata';
+import { MetadataBuilder, MetadataOptions } from './utils/Metadata';
 import { Auth } from './utils/Auth';
 import { Backend, Credentials, Profile } from './utils/Backend';
 import { CommonHelper } from './utils/CommonHelper';
 import { MediaDevicesChecker } from './utils/MediaDevicesChecker';
+import { CookiesStorage, LocalStorage } from './utils/Storage';
 
 export class LiveWidgetFactory {
   private mediaDevicesChecker: MediaDevicesChecker;
+  private metadataBuilder: MetadataBuilder;
 
   constructor(private env: Env) {
     config.init(env);
     this.mediaDevicesChecker = new MediaDevicesChecker();
+    const storage =
+      env.storage.type === WidgetStorageType.COOKIES ? new CookiesStorage(env.storage.expires) : new LocalStorage();
+    this.metadataBuilder = new MetadataBuilder(storage);
   }
 
   /**
@@ -69,7 +74,7 @@ export class LiveWidgetFactory {
       `Consultant must have role ROLE_CONSULTANT, but ${profile.role.role} given`,
     );
 
-    const metadata = MetadataHelper.create(metadataOptions, type, profile);
+    const metadata = this.metadataBuilder.create(metadataOptions, type, profile);
     const connectOptions: ConnectOptions = shallowMerge(profile.settings.init, {
       token: {
         data: JSON.stringify(metadata),
@@ -98,7 +103,7 @@ export class LiveWidgetFactory {
     authFetch: Fetch,
     options: MetadataOptions = {},
   ): Promise<ConsultantSignals> {
-    const metadata = MetadataHelper.create(options, ParticipantType.Consultant, profile);
+    const metadata = this.metadataBuilder.create(options, ParticipantType.Consultant, profile);
     return new ConsultantSignals(authFetch, metadata);
   }
 }
