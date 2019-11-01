@@ -1,11 +1,9 @@
 import { Connection, OpenViduError, Publisher, StreamManager, VideoElementEvent } from 'openvidu-browser';
 import { assert, log, DomHelper } from '@devlegal/shared-ts';
-import { env } from './env';
+import { config } from './env';
 import { PlayerAction } from './lib/ui/buttons/player';
 import {
   Media,
-  MediaDevicesNotFoundError,
-  OpenviduNotSupportedError,
   ParticipantType,
   SessionParticipant,
   Stream,
@@ -107,7 +105,7 @@ const run = async () => {
     handle: (md: ParticipantMetadata, conn: Connection) => log('Handle metadata:', md, conn),
   };
 
-  const lw: LiveWidgetFactory = new LiveWidgetFactory(env);
+  const lw: LiveWidgetFactory = new LiveWidgetFactory(config.env);
   try {
     await lw.checkRequirements();
   } catch (e) {
@@ -128,7 +126,7 @@ const run = async () => {
     consultantButton.disabled = true;
     clientButton.disabled = true;
 
-    consultantApi = await lw.defaultInit(ParticipantType.Consultant, env.credentials.consultant, elements, metadata);
+    consultantApi = await lw.defaultInit(ParticipantType.Consultant, config.credentials.consultant, elements, metadata);
     await consultantApi.onIncomingCall(async (metadata: SessionParticipant, answer: any) => {
       answerButton.disabled = false;
       answerButton.onclick = async () => {
@@ -169,7 +167,7 @@ const run = async () => {
     clientButton.disabled = true;
     consultantButton.disabled = true;
 
-    clientApi = await lw.defaultInit(ParticipantType.Client, env.credentials.client, elements, metadata);
+    clientApi = await lw.defaultInit(ParticipantType.Client, config.credentials.client, elements, metadata);
     callButton.disabled = false;
     callAudioButton.disabled = false;
 
