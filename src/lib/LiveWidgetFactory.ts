@@ -104,6 +104,8 @@ export class LiveWidgetFactory {
     options: MetadataOptions = {},
   ): Promise<ConsultantSignals> {
     const metadata = this.metadataBuilder.create(options, ParticipantType.Consultant, profile);
-    return new ConsultantSignals(authFetch, metadata);
+    const signals = new ConsultantSignals(authFetch, metadata);
+    await signals.init();
+    return signals;
   }
 }
