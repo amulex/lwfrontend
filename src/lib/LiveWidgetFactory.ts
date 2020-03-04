@@ -57,7 +57,6 @@ export class LiveWidgetFactory {
     credentials: Credentials,
     elements: ViewSettings,
     metadataOptions: MetadataOptions = {},
-    q: ParticipantMap[K]
   ): Promise<ParticipantMap[K]> {
     const fetch = await Auth.createAuthFetch(credentials);
     return this.createParticipant(type, fetch, elements, metadataOptions);
@@ -104,6 +103,10 @@ export class LiveWidgetFactory {
     authFetch: Fetch,
     options: MetadataOptions = {},
   ): Promise<ConsultantSignals> {
+    assert(
+      CommonHelper.isConsultantRole(profile.role.role),
+      `Consultant must have role ROLE_CONSULTANT, but ${profile.role.role} given`,
+    );
     const metadata = this.metadataBuilder.create(options, ParticipantType.Consultant, profile);
     const signals = new ConsultantSignals(authFetch, metadata);
     await signals.init();

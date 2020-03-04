@@ -1,35 +1,27 @@
-import {DomHelper, Fetch} from '@devlegal/shared-ts';
+import { DomHelper, Fetch } from '@devlegal/shared-ts';
 import {
-  WidgetEnv,
+  ClientMetadata,
   Media,
   ParticipantType,
   SessionParticipant,
   Stream,
   ViewSettings,
-  WidgetSelectors
-} from "./utils/Types";
-import {MetadataOptions, ParticipantMetadata} from "./utils/Metadata";
-import {PlayerAction} from "./ui/buttons/player";
-import {CommonHelper} from "./utils/CommonHelper";
-import {LiveWidgetApi} from "./api/LiveWidgetApi";
-import {Backend, Credentials, Profile, Tenant} from "./utils/Backend";
-import {SessionId} from "./openvidu/openvidu";
-import {ConsultantApi} from "./api/ConsultantApi";
-import {ClientApi} from "./api/ClientApi";
-import {AbstractLiveWidget, MessageHandlerMap, WidgetServiceMessageType} from "./AbstractLiveWidget";
-import {Auth} from "./utils/Auth";
-
-export interface WidgetServicePublisherProperties {
-  publishVideo?: boolean;
-}
-
-export interface ClientMetadata {
-  name?: string;
-  phone?: string;
-}
+  WidgetEnv,
+  WidgetSelectors,
+  WidgetServicePublisherProperties,
+} from './utils/Types';
+import { MetadataOptions, ParticipantMetadata } from './utils/Metadata';
+import { PlayerAction } from './ui/buttons/player';
+import { CommonHelper } from './utils/CommonHelper';
+import { LiveWidgetApi } from './api/LiveWidgetApi';
+import { Backend, Credentials, Tenant } from './utils/Backend';
+import { SessionId } from './openvidu/openvidu';
+import { ConsultantApi } from './api/ConsultantApi';
+import { ClientApi } from './api/ClientApi';
+import { AbstractLiveWidget, MessageHandlerMap, WidgetServiceMessageType } from './AbstractLiveWidget';
+import { Auth } from './utils/Auth';
 
 export class LiveWidgetService extends AbstractLiveWidget {
-
   // | null type is because specific of vue-class-component. ? fields are not reactive...
   private _clientMetadata: ClientMetadata | null = null;
   private _incomingCalls: Map<string, SessionParticipant> = new Map();
@@ -95,18 +87,34 @@ export class LiveWidgetService extends AbstractLiveWidget {
     throw new Error('Call method available only for Client participant type');
   }
 
-  public async init(type: ParticipantType, credentials: Credentials, selectors: WidgetSelectors, clientMetadata?: ClientMetadata): Promise<void>
-  public async init(type: ParticipantType, authFetch: Fetch, selectors: WidgetSelectors, clientMetadata?: ClientMetadata): Promise<void>
-  public async init(type: ParticipantType, accessProvider: Fetch | Credentials, selectors: WidgetSelectors, clientMetadata?: ClientMetadata): Promise<void> {
-    const authFetch = accessProvider instanceof Function ? accessProvider : (await Auth.createAuthFetch(accessProvider));
+  public async init(
+    type: ParticipantType,
+    credentials: Credentials,
+    selectors: WidgetSelectors,
+    clientMetadata?: ClientMetadata,
+  ): Promise<void>;
+  public async init(
+    type: ParticipantType,
+    authFetch: Fetch,
+    selectors: WidgetSelectors,
+    clientMetadata?: ClientMetadata,
+  ): Promise<void>;
+  public async init(
+    type: ParticipantType,
+    accessProvider: Fetch | Credentials,
+    selectors: WidgetSelectors,
+    clientMetadata?: ClientMetadata,
+  ): Promise<void> {
+    const authFetch = accessProvider instanceof Function ? accessProvider : await Auth.createAuthFetch(accessProvider);
 
     if (clientMetadata) {
       this._clientMetadata = clientMetadata;
     }
     this._profile = await Backend.fetchProfile(authFetch);
-    this._api = type === ParticipantType.Consultant
-      ? await this.initConsultantApi(authFetch, selectors)
-      : await this.initClientApi(authFetch, selectors);
+    this._api =
+      type === ParticipantType.Consultant
+        ? await this.initConsultantApi(authFetch, selectors)
+        : await this.initClientApi(authFetch, selectors);
     await this._api!.onParticipantLeft('all', (metadata: ParticipantMetadata) => {
       this.emit(WidgetServiceMessageType.PARTICIPANT_LEFT, metadata);
     });
@@ -120,42 +128,58 @@ export class LiveWidgetService extends AbstractLiveWidget {
   }
 
   public async canSwitchPublisherVideo(): Promise<boolean> {
-    if (!this.profile) { return false; }
+    if (!this.profile) {
+      return false;
+    }
     return this.profile.settings.buttons.custom.publisher.video === true && (await this.isCameraAvailable());
   }
 
   public async canSwitchSubscriberVideo(): Promise<boolean> {
-    if (!this.profile) { return false; }
+    if (!this.profile) {
+      return false;
+    }
     return this.profile.settings.buttons.custom.subscriber.video === true;
   }
 
   public async canPublishVideo(): Promise<boolean> {
-    if (!this.profile) { return false; }
+    if (!this.profile) {
+      return false;
+    }
     return this.profile.settings.streams.publisher.videoSource !== false && (await this.isCameraAvailable());
   }
 
   public async canSwitchPublisherAudio(): Promise<boolean> {
-    if (!this.profile) { return false; }
+    if (!this.profile) {
+      return false;
+    }
     return this.profile.settings.buttons.custom.publisher.audio === true && (await this.isMicrophoneAvailable());
   }
 
   public async canSwitchSubscriberAudio(): Promise<boolean> {
-    if (!this.profile) { return false; }
+    if (!this.profile) {
+      return false;
+    }
     return this.profile.settings.buttons.custom.subscriber.audio === true;
   }
 
   public async canPublishAudio(): Promise<boolean> {
-    if (!this.profile) { return false; }
+    if (!this.profile) {
+      return false;
+    }
     return this.profile.settings.streams.publisher.audioSource !== false && (await this.isMicrophoneAvailable());
   }
 
   public canSendFiles(): boolean {
-    if (!this.profile) { return false; }
+    if (!this.profile) {
+      return false;
+    }
     return this.profile.settings.chat.file === true;
   }
 
   public canSendMessages(): boolean {
-    if (!this.profile) { return false; }
+    if (!this.profile) {
+      return false;
+    }
     return this.profile.settings.chat.text === true;
   }
 
@@ -192,7 +216,12 @@ export class LiveWidgetService extends AbstractLiveWidget {
   }
 
   private async initConsultantApi(authFetch: Fetch, selectors: WidgetSelectors): Promise<ConsultantApi> {
-    const api = await this._lwFactory.createParticipant(ParticipantType.Consultant, authFetch, this.getViewSettings(selectors), this.metadata);
+    const api = await this._lwFactory.createParticipant(
+      ParticipantType.Consultant,
+      authFetch,
+      this.getViewSettings(selectors),
+      this.metadata,
+    );
     if (api) {
       await api.onIncomingCall((participant: SessionParticipant) => {
         this._incomingCalls.set(participant.session.sessionId, participant);
@@ -200,12 +229,16 @@ export class LiveWidgetService extends AbstractLiveWidget {
       });
       await api.onLeftCall((participant: SessionParticipant) => {
         this._incomingCalls.delete(participant.session.sessionId);
-        this._participants = this._participants.filter(p => p.system.profile.email !== participant.participant.system.profile.email);
+        this._participants = this._participants.filter(
+          p => p.system.profile.email !== participant.participant.system.profile.email,
+        );
         this.emit(WidgetServiceMessageType.SOMEONE_LEFT, participant);
       });
       await api.onAnsweredCall((participant: SessionParticipant) => {
         this._incomingCalls.delete(participant.session.sessionId);
-        this._participants = this._participants.filter(p => p.system.profile.email !== participant.participant.system.profile.email);
+        this._participants = this._participants.filter(
+          p => p.system.profile.email !== participant.participant.system.profile.email,
+        );
         this.emit(WidgetServiceMessageType.SOMEONE_LEFT, participant);
       });
       return api;
@@ -215,7 +248,12 @@ export class LiveWidgetService extends AbstractLiveWidget {
   }
 
   private async initClientApi(authFetch: Fetch, selectors: WidgetSelectors): Promise<ClientApi> {
-    const api = await this._lwFactory.createParticipant(ParticipantType.Client, authFetch, this.getViewSettings(selectors), this.metadata);
+    const api = await this._lwFactory.createParticipant(
+      ParticipantType.Client,
+      authFetch,
+      this.getViewSettings(selectors),
+      this.metadata,
+    );
     if (api) {
       return api;
     } else {
@@ -253,43 +291,43 @@ export class LiveWidgetService extends AbstractLiveWidget {
   }
 
   private getViewSettings(selectors: WidgetSelectors): ViewSettings {
-    const settings: any = {
+    const settings: ViewSettings = {
       streamsTargets: {
         publisher: DomHelper.query(selectors.streamsTargets.publisher),
         subscriber: DomHelper.query(selectors.streamsTargets.subscriber),
       },
       handleTargets: {
         created: this.onVideoCreated.bind(this),
-        destroyed: this.onVideoDestroyed.bind(this)
+        destroyed: this.onVideoDestroyed.bind(this),
       },
-      buttons: []
+      buttons: [],
     };
 
     if (selectors.buttons) {
       if (selectors.buttons.toggleMic) {
-        settings.buttons.push({
+        settings.buttons!.push({
           elements: () => DomHelper.queryAll(selectors.buttons!.toggleMic!),
           streams: [Stream.Publisher],
           media: [Media.Audio],
-          action: PlayerAction.Toggle
+          action: PlayerAction.Toggle,
         });
       }
 
       if (selectors.buttons.toggleCamera) {
-        settings.buttons.push({
+        settings.buttons!.push({
           elements: () => DomHelper.queryAll(selectors.buttons!.toggleCamera!),
           streams: [Stream.Publisher],
           media: [Media.Video],
-          action: PlayerAction.Toggle
+          action: PlayerAction.Toggle,
         });
       }
 
       if (selectors.buttons.toggleSound) {
-        settings.buttons.push({
+        settings.buttons!.push({
           elements: () => DomHelper.queryAll(selectors.buttons!.toggleSound!),
           streams: [Stream.Subscriber],
           media: [Media.Audio],
-          action: PlayerAction.Toggle
+          action: PlayerAction.Toggle,
         });
       }
     }
@@ -302,24 +340,28 @@ export class LiveWidgetService extends AbstractLiveWidget {
           messages: {
             container: DomHelper.query(selectors.chat.messages.container),
             messageTemplate: DomHelper.query(selectors.chat.messages.template),
-            formatTime: (time: Date) => `${CommonHelper.padLeft(time.getHours(), 2)}:${CommonHelper.padLeft(time.getMinutes(), 2)}`,
+            formatTime: (time: Date) =>
+              `${CommonHelper.padLeft(time.getHours(), 2)}:${CommonHelper.padLeft(time.getMinutes(), 2)}`,
             onReceived: this.onMessageReceived.bind(this),
-            onSent: this.onMessageSent.bind(this)
+            onSent: this.onMessageSent.bind(this),
           },
-        }
+        },
       };
     }
 
     if (selectors.file) {
-      settings.file = {
-        input: DomHelper.query(selectors.file.input) as HTMLInputElement,
-        messages: {
-          container: DomHelper.query(selectors.file.messages.container),
-          messageTemplate: DomHelper.query(selectors.file.messages.template),
-          formatTime: (time: Date) => `${CommonHelper.padLeft(time.getHours(), 2)}:${CommonHelper.padLeft(time.getMinutes(), 2)}`,
-          formatText: (file: File) => `Download ${file.name}`,
-          onReceived: this.onFileReceived.bind(this),
-          onSent: this.onFileSent.bind(this)
+      settings.chat = {
+        file: {
+          input: DomHelper.query(selectors.file.input) as HTMLInputElement,
+          messages: {
+            container: DomHelper.query(selectors.file.messages.container),
+            messageTemplate: DomHelper.query(selectors.file.messages.template),
+            formatTime: (time: Date) =>
+              `${CommonHelper.padLeft(time.getHours(), 2)}:${CommonHelper.padLeft(time.getMinutes(), 2)}`,
+            formatText: (file: File) => `Download ${file.name}`,
+            onReceived: this.onFileReceived.bind(this),
+            onSent: this.onFileSent.bind(this),
+          },
         },
       };
     }
@@ -329,8 +371,8 @@ export class LiveWidgetService extends AbstractLiveWidget {
 
   private get metadata(): MetadataOptions {
     return {
-      data: (this._clientMetadata) ? this._clientMetadata : undefined,
-      handle: this.onParticipantJoined.bind(this)
+      data: this._clientMetadata ? this._clientMetadata : undefined,
+      handle: this.onParticipantJoined.bind(this),
     };
   }
 }

@@ -1,7 +1,6 @@
-export { LiveWidgetFactory } from './lib/LiveWidgetFactory';
-export { ConsultantApi } from './lib/api/ConsultantApi';
-export { ClientApi } from './lib/api/ClientApi';
-export { LiveWidgetApi } from './lib/api/LiveWidgetApi';
+export { WidgetServiceMessageType } from './lib/AbstractLiveWidget';
+export { LiveWidgetService } from './lib/LiveWidgetService';
+export { LiveWidgetSignals } from './lib/LiveWidgetSignals';
 
 export { MetadataBuilder, MetadataOptions, ParticipantMetadata } from './lib/utils/Metadata';
 export { Auth } from './lib/utils/Auth';
@@ -9,6 +8,9 @@ export { Login, JwtToken, Profile, Tenant, Backend } from './lib/utils/Backend';
 
 export { SessionId } from './lib/openvidu/openvidu';
 export {
+  WidgetEnv,
+  WidgetSelectors,
+  WidgetServicePublisherProperties,
   ViewSettings,
   Media,
   ParticipantType,

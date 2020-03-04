@@ -6,7 +6,7 @@ import { CustomizableSessionOpts, DeepReadonly } from '@devlegal/shared-ts';
 import { ButtonConfig, ButtonsPermissions } from '../ui/buttons/buttons';
 import { HandleVideoElementEvent } from '../openvidu/openvidu';
 import { ChatView, FileView } from '../ui/chat';
-import {WidgetStorageSettings} from "./Storage";
+import { WidgetStorageSettings } from './Storage';
 
 export enum Stream {
   Publisher = 'publisher',
@@ -86,6 +86,48 @@ type StreamsProperties = DeepReadonly<{
   }>;
 }>;
 
+export type WidgetSelectors = DeepReadonly<{
+  streamsTargets: {
+    publisher: string;
+    subscriber: string;
+  };
+  buttons?: {
+    toggleMic?: string;
+    toggleCamera?: string;
+    toggleSound?: string;
+  };
+  chat?: {
+    input: string;
+    button: string;
+    messages: {
+      container: string;
+      template: string;
+    };
+  };
+  file?: {
+    input: string;
+    messages: {
+      container: string;
+      template: string;
+    };
+  };
+}>;
+
+export type WidgetEnv = DeepReadonly<{
+  backendUrl: string;
+  middlewareUrl: string;
+  storageSettings: WidgetStorageSettings;
+}>;
+
+export type WidgetServicePublisherProperties = DeepReadonly<{
+  publishVideo?: boolean;
+}>;
+
+export type ClientMetadata = DeepReadonly<{
+  name?: string;
+  phone?: string;
+}>;
+
 export class MediaDevicesNotFoundError extends Error {
   constructor(message?: string) {
     super(message);
@@ -98,37 +140,4 @@ export class OpenviduNotSupportedError extends Error {
     super(message);
     Object.setPrototypeOf(this, OpenviduNotSupportedError.prototype);
   }
-}
-
-export interface WidgetSelectors {
-  streamsTargets: {
-    publisher: string,
-    subscriber: string,
-  };
-  buttons?: {
-    toggleMic?: string,
-    toggleCamera?: string,
-    toggleSound?: string,
-  };
-  chat?: {
-    input: string,
-    button: string,
-    messages: {
-      container: string,
-      template: string,
-    },
-  };
-  file?: {
-    input: string,
-    messages: {
-      container: string,
-      template: string,
-    },
-  };
-}
-
-export interface WidgetEnv {
-  backendUrl: string;
-  middlewareUrl: string;
-  storageSettings: WidgetStorageSettings;
 }

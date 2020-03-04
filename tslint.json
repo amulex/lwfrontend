@@ -9,6 +9,7 @@
     "object-literal-sort-keys": false,
     "variable-name": false,
     "no-conditional-assignment": false,
-    "member-ordering": false
+    "member-ordering": false,
+    "unified-signatures": false
   }
 }
