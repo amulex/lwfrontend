@@ -6,7 +6,7 @@ import { CustomizableSessionOpts, DeepReadonly } from '@devlegal/shared-ts';
 import { ButtonConfig, ButtonsPermissions } from '../ui/buttons/buttons';
 import { HandleVideoElementEvent } from '../openvidu/openvidu';
 import { ChatView, FileView } from '../ui/chat';
-import { StreamsTargets } from './Types';
+import {WidgetStorageSettings} from "./Storage";
 
 export enum Stream {
   Publisher = 'publisher',
@@ -98,4 +98,37 @@ export class OpenviduNotSupportedError extends Error {
     super(message);
     Object.setPrototypeOf(this, OpenviduNotSupportedError.prototype);
   }
+}
+
+export interface WidgetSelectors {
+  streamsTargets: {
+    publisher: string,
+    subscriber: string,
+  };
+  buttons?: {
+    toggleMic?: string,
+    toggleCamera?: string,
+    toggleSound?: string,
+  };
+  chat?: {
+    input: string,
+    button: string,
+    messages: {
+      container: string,
+      template: string,
+    },
+  };
+  file?: {
+    input: string,
+    messages: {
+      container: string,
+      template: string,
+    },
+  };
+}
+
+export interface WidgetEnv {
+  backendUrl: string;
+  middlewareUrl: string;
+  storageSettings: WidgetStorageSettings;
 }

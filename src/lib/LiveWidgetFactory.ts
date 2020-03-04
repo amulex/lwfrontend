@@ -57,6 +57,7 @@ export class LiveWidgetFactory {
     credentials: Credentials,
     elements: ViewSettings,
     metadataOptions: MetadataOptions = {},
+    q: ParticipantMap[K]
   ): Promise<ParticipantMap[K]> {
     const fetch = await Auth.createAuthFetch(credentials);
     return this.createParticipant(type, fetch, elements, metadataOptions);

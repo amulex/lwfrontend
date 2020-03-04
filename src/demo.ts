@@ -8,6 +8,7 @@ import { ClientApi } from './lib/api/ClientApi';
 import { ConsultantApi } from './lib/api/ConsultantApi';
 import { LiveWidgetFactory } from './lib/LiveWidgetFactory';
 import { CommonHelper } from './lib/utils/CommonHelper';
+import {WidgetStorageType} from "./lib/utils/Storage";
 
 const run = async () => {
   const elements = {
