@@ -82,7 +82,10 @@ export class AddButtonsFactory {
       for (const button of streamButtons) {
         const players = button.media.map(media => {
           const actions = playerActions[stream][media];
-          return new SimplePlayer(() => actions.play(streamManager), () => actions.pause(streamManager));
+          return new SimplePlayer(
+            () => actions.play(streamManager),
+            () => actions.pause(streamManager),
+          );
         });
         const player = new CompositePlayer(players);
         button.elements(event).forEach(el =>

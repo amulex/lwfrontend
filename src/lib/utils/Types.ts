@@ -27,8 +27,8 @@ export enum ParticipantType {
 }
 
 export type ParticipantMap = {
-  client: ClientApi;
-  consultant: ConsultantApi;
+  [ParticipantType.Client]: ClientApi;
+  [ParticipantType.Consultant]: ConsultantApi;
 };
 
 /**

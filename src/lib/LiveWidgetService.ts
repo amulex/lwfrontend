@@ -301,6 +301,7 @@ export class LiveWidgetService extends AbstractLiveWidget {
         destroyed: this.onVideoDestroyed.bind(this),
       },
       buttons: [],
+      chat: {},
     };
 
     if (selectors.buttons) {
@@ -333,35 +334,31 @@ export class LiveWidgetService extends AbstractLiveWidget {
     }
 
     if (selectors.chat) {
-      settings.chat = {
-        text: {
-          input: DomHelper.query(selectors.chat.input) as HTMLTextAreaElement,
-          button: DomHelper.query(selectors.chat.button),
-          messages: {
-            container: DomHelper.query(selectors.chat.messages.container),
-            messageTemplate: DomHelper.query(selectors.chat.messages.template),
-            formatTime: (time: Date) =>
-              `${CommonHelper.padLeft(time.getHours(), 2)}:${CommonHelper.padLeft(time.getMinutes(), 2)}`,
-            onReceived: this.onMessageReceived.bind(this),
-            onSent: this.onMessageSent.bind(this),
-          },
+      settings.chat!.text = {
+        input: DomHelper.query(selectors.chat.input) as HTMLTextAreaElement,
+        button: DomHelper.query(selectors.chat.button),
+        messages: {
+          container: DomHelper.query(selectors.chat.messages.container),
+          messageTemplate: DomHelper.query(selectors.chat.messages.template),
+          formatTime: (time: Date) =>
+            `${CommonHelper.padLeft(time.getHours(), 2)}:${CommonHelper.padLeft(time.getMinutes(), 2)}`,
+          onReceived: this.onMessageReceived.bind(this),
+          onSent: this.onMessageSent.bind(this),
         },
       };
     }
 
     if (selectors.file) {
-      settings.chat = {
-        file: {
-          input: DomHelper.query(selectors.file.input) as HTMLInputElement,
-          messages: {
-            container: DomHelper.query(selectors.file.messages.container),
-            messageTemplate: DomHelper.query(selectors.file.messages.template),
-            formatTime: (time: Date) =>
-              `${CommonHelper.padLeft(time.getHours(), 2)}:${CommonHelper.padLeft(time.getMinutes(), 2)}`,
-            formatText: (file: File) => `Download ${file.name}`,
-            onReceived: this.onFileReceived.bind(this),
-            onSent: this.onFileSent.bind(this),
-          },
+      settings.chat!.file = {
+        input: DomHelper.query(selectors.file.input) as HTMLInputElement,
+        messages: {
+          container: DomHelper.query(selectors.file.messages.container),
+          messageTemplate: DomHelper.query(selectors.file.messages.template),
+          formatTime: (time: Date) =>
+            `${CommonHelper.padLeft(time.getHours(), 2)}:${CommonHelper.padLeft(time.getMinutes(), 2)}`,
+          formatText: (file: File) => `Download ${file.name}`,
+          onReceived: this.onFileReceived.bind(this),
+          onSent: this.onFileSent.bind(this),
         },
       };
     }

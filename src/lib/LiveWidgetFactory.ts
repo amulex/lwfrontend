@@ -95,7 +95,7 @@ export class LiveWidgetFactory {
       metadataOptions,
       this.mediaDevicesChecker,
       signals as ConsultantSignals & ClientSignals,
-    );
+    ) as ParticipantMap[K];
   }
 
   public async createConsultantSignals(

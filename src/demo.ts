@@ -93,7 +93,7 @@ const run = async () => {
     });
 
     service.on(WidgetServiceMessageType.FILE_RECEIVED, (file: File) => {
-      console.log('received', file);
+      console.log('file received', file);
     });
 
     service.on(WidgetServiceMessageType.MESSAGE_RECEIVED, (msg: string) => {
@@ -140,7 +140,7 @@ const run = async () => {
     });
 
     service.on(WidgetServiceMessageType.FILE_RECEIVED, (file: File) => {
-      console.log('received', file);
+      console.log('file received', file);
     });
 
     service.on(WidgetServiceMessageType.MESSAGE_RECEIVED, (msg: string) => {
