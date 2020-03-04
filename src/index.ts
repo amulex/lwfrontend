@@ -11,6 +11,7 @@ export {
   WidgetEnv,
   WidgetSelectors,
   WidgetServicePublisherProperties,
+  ClientMetadata,
   ViewSettings,
   Media,
   ParticipantType,
