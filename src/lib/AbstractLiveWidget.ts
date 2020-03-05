@@ -101,7 +101,7 @@ export class AbstractLiveWidget {
         backend: settings.backendUrl,
         middleware: settings.middlewareUrl,
       },
-      storage: settings.storageSettings,
+      storage: settings.storage,
     });
   }
 

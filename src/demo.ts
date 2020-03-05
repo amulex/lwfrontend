@@ -14,7 +14,7 @@ const run = async () => {
   const env: WidgetEnv = {
     backendUrl: config.env.host.backend,
     middlewareUrl: config.env.host.middleware,
-    storageSettings: {
+    storage: {
       type: WidgetStorageType.LOCAL_STORAGE,
     },
   };

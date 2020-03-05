@@ -116,7 +116,7 @@ export type WidgetSelectors = {
 export type WidgetEnv = {
   backendUrl: string;
   middlewareUrl: string;
-  storageSettings: WidgetStorageSettings;
+  storage: WidgetStorageSettings;
 };
 
 export type WidgetServicePublisherProperties = {
