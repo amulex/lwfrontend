@@ -24,7 +24,6 @@ import { Auth } from './utils/Auth';
 export class LiveWidgetService extends AbstractLiveWidget {
   // | null type is because specific of vue-class-component. ? fields are not reactive...
   private _clientMetadata: ClientMetadata | null = null;
-  private _incomingCalls: Map<string, SessionParticipant> = new Map();
   private _api: LiveWidgetApi | null = null;
   private _participants: ParticipantMetadata[] = [];
 
@@ -56,16 +55,12 @@ export class LiveWidgetService extends AbstractLiveWidget {
 
   public async join(sessionId: string): Promise<void> {
     if (this.isConsultantApi(this._api)) {
-      const participant = this._incomingCalls.get(sessionId);
-      if (participant) {
-        this.emit(WidgetServiceMessageType.JOINING_CALL, participant);
-        this._incomingCalls.delete(sessionId);
-        await this._api.answer(sessionId);
-        this.emit(WidgetServiceMessageType.JOINED_CALL, participant);
-        return;
-      }
+      this.emit(WidgetServiceMessageType.JOINING_CALL, sessionId);
+      await this._api.answer(sessionId);
+      this.emit(WidgetServiceMessageType.JOINED_CALL, sessionId);
+      return;
     }
-    throw new Error('JoinCall method available only for Consultant participant type');
+    throw new Error('Join method available only for Consultant participant type');
   }
 
   public async leave(): Promise<void> {
@@ -224,18 +219,15 @@ export class LiveWidgetService extends AbstractLiveWidget {
     );
     if (api) {
       await api.onIncomingCall((participant: SessionParticipant) => {
-        this._incomingCalls.set(participant.session.sessionId, participant);
         this.emit(WidgetServiceMessageType.INCOMING_CALL, participant);
       });
       await api.onLeftCall((participant: SessionParticipant) => {
-        this._incomingCalls.delete(participant.session.sessionId);
         this._participants = this._participants.filter(
           p => p.system.profile.email !== participant.participant.system.profile.email,
         );
         this.emit(WidgetServiceMessageType.SOMEONE_LEFT, participant);
       });
       await api.onAnsweredCall((participant: SessionParticipant) => {
-        this._incomingCalls.delete(participant.session.sessionId);
         this._participants = this._participants.filter(
           p => p.system.profile.email !== participant.participant.system.profile.email,
         );

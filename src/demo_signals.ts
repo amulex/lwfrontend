@@ -6,8 +6,9 @@ import { SessionId } from './lib/openvidu/openvidu';
 import {LiveWidgetSignals} from "./lib/LiveWidgetSignals";
 
 /**
- * This file demonstrates usage of more high-level LiveWidgetService.
- * There is more low-level LiveWidgetApi. Its demo is in demo_api.ts
+ * This file demonstrates usage of LiveWidgetSignals.
+ * It can be used when you (as consultant) don't have controls for communication in current page
+ * and just want to listen incoming calls
  */
 const run = async () => {
     const env: WidgetEnv = {
