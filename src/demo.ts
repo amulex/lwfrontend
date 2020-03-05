@@ -1,10 +1,10 @@
-import { LiveWidgetService } from './lib/LiveWidgetService';
-import { WidgetStorageType } from './lib/utils/Storage';
-import { config } from './env';
-import { ParticipantType, SessionParticipant, WidgetEnv, WidgetSelectors } from './lib/utils/Types';
-import { DomHelper } from '@devlegal/shared-ts';
-import { WidgetServiceMessageType } from './lib/AbstractLiveWidget';
-import { SessionId } from './lib/openvidu/openvidu';
+import {LiveWidgetService} from './lib/LiveWidgetService';
+import {WidgetStorageType} from './lib/utils/Storage';
+import {config} from './env';
+import {ParticipantType, SessionParticipant, WidgetEnv, WidgetSelectors} from './lib/utils/Types';
+import {DomHelper} from '@devlegal/shared-ts';
+import {WidgetServiceMessageType} from './lib/AbstractLiveWidget';
+import {SessionId} from './lib/openvidu/openvidu';
 
 /**
  * This file demonstrates usage of more high-level LiveWidgetService.
@@ -135,7 +135,7 @@ const run = async () => {
       incomingSessionId = '';
     });
 
-    service.on(WidgetServiceMessageType.JOINED_CALL, () => {
+    service.on(WidgetServiceMessageType.JOINED_CALL, (sessionId: SessionId) => {
       leaveButton.disabled = false;
       answerButton.disabled = true;
       controls.forEach(c => (c.hidden = false));
@@ -147,6 +147,14 @@ const run = async () => {
 
     service.on(WidgetServiceMessageType.MESSAGE_RECEIVED, (msg: string) => {
       console.log('msg received', msg);
+    });
+
+    service.on(WidgetServiceMessageType.PARTICIPANT_JOINED, (participant: SessionParticipant) => {
+      console.log('participant joined', participant);
+    });
+
+    service.on(WidgetServiceMessageType.PARTICIPANT_LEFT, (participant: SessionParticipant) => {
+      console.log('participant left', participant);
     });
 
     answerButton.onclick = async () => {

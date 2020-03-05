@@ -20,6 +20,7 @@ import { ConsultantApi } from './api/ConsultantApi';
 import { ClientApi } from './api/ClientApi';
 import { AbstractLiveWidget, MessageHandlerMap, WidgetServiceMessageType } from './AbstractLiveWidget';
 import { Auth } from './utils/Auth';
+import {Connection} from "openvidu-browser";
 
 export class LiveWidgetService extends AbstractLiveWidget {
   // | null type is because specific of vue-class-component. ? fields are not reactive...
@@ -110,8 +111,15 @@ export class LiveWidgetService extends AbstractLiveWidget {
       type === ParticipantType.Consultant
         ? await this.initConsultantApi(authFetch, selectors)
         : await this.initClientApi(authFetch, selectors);
-    await this._api!.onParticipantLeft('all', (metadata: ParticipantMetadata) => {
-      this.emit(WidgetServiceMessageType.PARTICIPANT_LEFT, metadata);
+    await this._api!.onParticipantLeft('all', (metadata: ParticipantMetadata, connection: Connection) => {
+      const sessionParticipant: SessionParticipant = {
+        session: {
+          sessionId: (connection as any).session.sessionId,
+          connection: connection
+        },
+        participant: metadata
+      };
+      this.emit(WidgetServiceMessageType.PARTICIPANT_LEFT, sessionParticipant);
     });
     this.emit(WidgetServiceMessageType.AFTER_INIT);
   }
@@ -253,9 +261,16 @@ export class LiveWidgetService extends AbstractLiveWidget {
     }
   }
 
-  private onParticipantJoined(md: ParticipantMetadata, connection: any) {
-    this._participants.push(md);
-    this.emit(WidgetServiceMessageType.PARTICIPANT_JOINED, md);
+  private onParticipantJoined(metadata: ParticipantMetadata, connection: Connection) {
+    this._participants.push(metadata);
+    const sessionParticipant: SessionParticipant = {
+      session: {
+        sessionId: (connection as any).session.sessionId,
+        connection: connection
+      },
+      participant: metadata
+    };
+    this.emit(WidgetServiceMessageType.PARTICIPANT_JOINED, sessionParticipant);
   }
 
   private onMessageReceived(text: string, time: Date) {
