@@ -1,10 +1,10 @@
-import {LiveWidgetService} from './lib/LiveWidgetService';
-import {WidgetStorageType} from './lib/utils/Storage';
-import {config} from './env';
-import {ParticipantType, SessionParticipant, WidgetEnv, WidgetSelectors} from './lib/utils/Types';
-import {DomHelper} from '@devlegal/shared-ts';
-import {WidgetServiceMessageType} from './lib/AbstractLiveWidget';
-import {SessionId} from './lib/openvidu/openvidu';
+import { LiveWidgetService } from './lib/LiveWidgetService';
+import { WidgetStorageType } from './lib/utils/Storage';
+import { config } from './env';
+import { ParticipantType, SessionParticipant, WidgetEnv, WidgetSelectors } from './lib/utils/Types';
+import { DomHelper } from '@devlegal/shared-ts';
+import { WidgetServiceMessageType } from './lib/AbstractLiveWidget';
+import { SessionId } from './lib/openvidu/openvidu';
 
 /**
  * This file demonstrates usage of more high-level LiveWidgetService.

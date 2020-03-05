@@ -1,4 +1,4 @@
-import { SessionParticipant, WidgetEnv} from './utils/Types';
+import { SessionParticipant, WidgetEnv } from './utils/Types';
 import { v1 } from 'uuid';
 import { LiveWidgetFactory } from './LiveWidgetFactory';
 import { Profile } from './utils/Backend';
@@ -11,7 +11,7 @@ export type VideoElementHandler = (stream: any) => void;
 export type IncomingCallHandler = ParticipantSpecificHandler;
 export type LeftHandler = ParticipantSpecificHandler;
 export type ParticipantLeftHandler = ParticipantSpecificHandler;
-export type ParticipantJoinedHandler = ParticipantSpecificHandler
+export type ParticipantJoinedHandler = ParticipantSpecificHandler;
 export type LeavingCallHandler = SessionSpecificHandler;
 export type LeftCallHandler = SessionSpecificHandler;
 export type JoiningCallHandler = SessionSpecificHandler;

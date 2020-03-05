@@ -104,7 +104,7 @@ export type WidgetSelectors = {
         container: string;
         template: string;
       };
-    },
+    };
     file?: {
       input: string;
       messages: {

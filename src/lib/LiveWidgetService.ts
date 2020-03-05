@@ -20,7 +20,7 @@ import { ConsultantApi } from './api/ConsultantApi';
 import { ClientApi } from './api/ClientApi';
 import { AbstractLiveWidget, MessageHandlerMap, WidgetServiceMessageType } from './AbstractLiveWidget';
 import { Auth } from './utils/Auth';
-import {Connection} from "openvidu-browser";
+import { Connection } from 'openvidu-browser';
 
 export class LiveWidgetService extends AbstractLiveWidget {
   // | null type is because specific of vue-class-component. ? fields are not reactive...
@@ -115,9 +115,9 @@ export class LiveWidgetService extends AbstractLiveWidget {
       const sessionParticipant: SessionParticipant = {
         session: {
           sessionId: (connection as any).session.sessionId,
-          connection: connection
+          connection,
         },
-        participant: metadata
+        participant: metadata,
       };
       this.emit(WidgetServiceMessageType.PARTICIPANT_LEFT, sessionParticipant);
     });
@@ -266,9 +266,9 @@ export class LiveWidgetService extends AbstractLiveWidget {
     const sessionParticipant: SessionParticipant = {
       session: {
         sessionId: (connection as any).session.sessionId,
-        connection: connection
+        connection,
       },
-      participant: metadata
+      participant: metadata,
     };
     this.emit(WidgetServiceMessageType.PARTICIPANT_JOINED, sessionParticipant);
   }
