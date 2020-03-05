@@ -333,13 +333,13 @@ export class LiveWidgetService extends AbstractLiveWidget {
       }
     }
 
-    if (selectors.chat) {
+    if (selectors.chat.text) {
       settings.chat!.text = {
-        input: DomHelper.query(selectors.chat.input) as HTMLTextAreaElement,
-        button: DomHelper.query(selectors.chat.button),
+        input: DomHelper.query(selectors.chat.text.input) as HTMLTextAreaElement,
+        button: DomHelper.query(selectors.chat.text.button),
         messages: {
-          container: DomHelper.query(selectors.chat.messages.container),
-          messageTemplate: DomHelper.query(selectors.chat.messages.template),
+          container: DomHelper.query(selectors.chat.text.messages.container),
+          messageTemplate: DomHelper.query(selectors.chat.text.messages.template),
           formatTime: (time: Date) =>
             `${CommonHelper.padLeft(time.getHours(), 2)}:${CommonHelper.padLeft(time.getMinutes(), 2)}`,
           onReceived: this.onMessageReceived.bind(this),
@@ -348,12 +348,12 @@ export class LiveWidgetService extends AbstractLiveWidget {
       };
     }
 
-    if (selectors.file) {
+    if (selectors.chat.file) {
       settings.chat!.file = {
-        input: DomHelper.query(selectors.file.input) as HTMLInputElement,
+        input: DomHelper.query(selectors.chat.file.input) as HTMLInputElement,
         messages: {
-          container: DomHelper.query(selectors.file.messages.container),
-          messageTemplate: DomHelper.query(selectors.file.messages.template),
+          container: DomHelper.query(selectors.chat.file.messages.container),
+          messageTemplate: DomHelper.query(selectors.chat.file.messages.template),
           formatTime: (time: Date) =>
             `${CommonHelper.padLeft(time.getHours(), 2)}:${CommonHelper.padLeft(time.getMinutes(), 2)}`,
           formatText: (file: File) => `Download ${file.name}`,

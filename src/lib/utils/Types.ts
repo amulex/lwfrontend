@@ -96,19 +96,21 @@ export type WidgetSelectors = {
     toggleCamera?: string;
     toggleSound?: string;
   };
-  chat?: {
-    input: string;
-    button: string;
-    messages: {
-      container: string;
-      template: string;
-    };
-  };
-  file?: {
-    input: string;
-    messages: {
-      container: string;
-      template: string;
+  chat: {
+    text?: {
+      input: string;
+      button: string;
+      messages: {
+        container: string;
+        template: string;
+      };
+    },
+    file?: {
+      input: string;
+      messages: {
+        container: string;
+        template: string;
+      };
     };
   };
 };

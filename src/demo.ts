@@ -30,18 +30,20 @@ const run = async () => {
       toggleSound: 'button.sound.toggle',
     },
     chat: {
-      input: '#chat textarea',
-      button: '#chat button',
-      messages: {
-        container: '#chat .messages',
-        template: '.widget-templates .chat-message',
+      text: {
+        input: '#chat textarea',
+        button: '#chat button',
+        messages: {
+          container: '#chat .messages',
+          template: '.widget-templates .chat-message',
+        },
       },
-    },
-    file: {
-      input: '#chat input',
-      messages: {
-        container: '#chat .messages',
-        template: '.widget-templates .file-message',
+      file: {
+        input: '#chat input',
+        messages: {
+          container: '#chat .messages',
+          template: '.widget-templates .file-message',
+        },
       },
     },
   };
