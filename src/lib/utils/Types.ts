@@ -86,7 +86,7 @@ type StreamsProperties = DeepReadonly<{
   }>;
 }>;
 
-export type WidgetSelectors = DeepReadonly<{
+export type WidgetSelectors = {
   streamsTargets: {
     publisher: string;
     subscriber: string;
@@ -111,22 +111,19 @@ export type WidgetSelectors = DeepReadonly<{
       template: string;
     };
   };
-}>;
+};
 
-export type WidgetEnv = DeepReadonly<{
+export type WidgetEnv = {
   backendUrl: string;
   middlewareUrl: string;
   storageSettings: WidgetStorageSettings;
-}>;
+};
 
-export type WidgetServicePublisherProperties = DeepReadonly<{
+export type WidgetServicePublisherProperties = {
   publishVideo?: boolean;
-}>;
+};
 
-export type ClientMetadata = DeepReadonly<{
-  name?: string;
-  phone?: string;
-}>;
+export type ClientMetadata = any;
 
 export class MediaDevicesNotFoundError extends Error {
   constructor(message?: string) {
