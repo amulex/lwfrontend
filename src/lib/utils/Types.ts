@@ -6,7 +6,7 @@ import { CustomizableSessionOpts, DeepReadonly } from '@devlegal/shared-ts';
 import { ButtonConfig, ButtonsPermissions } from '../ui/buttons/buttons';
 import { HandleVideoElementEvent } from '../openvidu/openvidu';
 import { ChatView, FileView } from '../ui/chat';
-import { StreamsTargets } from './Types';
+import { WidgetStorageSettings } from './Storage';
 
 export enum Stream {
   Publisher = 'publisher',
@@ -27,8 +27,8 @@ export enum ParticipantType {
 }
 
 export type ParticipantMap = {
-  client: ClientApi;
-  consultant: ConsultantApi;
+  [ParticipantType.Client]: ClientApi;
+  [ParticipantType.Consultant]: ConsultantApi;
 };
 
 /**
@@ -85,6 +85,47 @@ type StreamsProperties = DeepReadonly<{
     videoSource: false;
   }>;
 }>;
+
+export type WidgetSelectors = {
+  streamsTargets: {
+    publisher: string;
+    subscriber: string;
+  };
+  buttons?: {
+    toggleMic?: string;
+    toggleCamera?: string;
+    toggleSound?: string;
+  };
+  chat: {
+    text?: {
+      input: string;
+      button: string;
+      messages: {
+        container: string;
+        template: string;
+      };
+    };
+    file?: {
+      input: string;
+      messages: {
+        container: string;
+        template: string;
+      };
+    };
+  };
+};
+
+export type WidgetEnv = {
+  backendUrl: string;
+  middlewareUrl: string;
+  storage: WidgetStorageSettings;
+};
+
+export type WidgetServicePublisherProperties = {
+  publishVideo?: boolean;
+};
+
+export type ClientMetadata = any;
 
 export class MediaDevicesNotFoundError extends Error {
   constructor(message?: string) {

@@ -95,7 +95,7 @@ export class LiveWidgetFactory {
       metadataOptions,
       this.mediaDevicesChecker,
       signals as ConsultantSignals & ClientSignals,
-    );
+    ) as ParticipantMap[K];
   }
 
   public async createConsultantSignals(
@@ -103,6 +103,10 @@ export class LiveWidgetFactory {
     authFetch: Fetch,
     options: MetadataOptions = {},
   ): Promise<ConsultantSignals> {
+    assert(
+      CommonHelper.isConsultantRole(profile.role.role),
+      `Consultant must have role ROLE_CONSULTANT, but ${profile.role.role} given`,
+    );
     const metadata = this.metadataBuilder.create(options, ParticipantType.Consultant, profile);
     const signals = new ConsultantSignals(authFetch, metadata);
     await signals.init();

@@ -15,4 +15,9 @@ export class CommonHelper {
     }
     throw new Error('Invalid stream type');
   }
+
+  public static padLeft(str: string | number, padLength: number, padChar: string = '0'): string {
+    const pad = new Array(1 + padLength).join(padChar);
+    return (pad + str).slice(-pad.length);
+  }
 }
